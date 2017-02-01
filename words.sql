@@ -1,10 +1,10 @@
-CREATE DATABASE words;
-
-\connect words
-
-CREATE TABLE words (
-    word varchar(16)
-);
+--CREATE DATABASE words;
+--
+--\connect words
+--
+--CREATE TABLE words (
+--    word varchar(16)
+--);
 
 INSERT INTO words VALUES ('aa');
 INSERT INTO words VALUES ('aah');
