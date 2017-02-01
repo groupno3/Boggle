@@ -7,22 +7,17 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Holo.NoActionBar"
-        >
-        <activity android:name=".MainActivity"
-
-            >
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity android:name=".SinglePlayer"/>
+        <activity android:name=".SinglePlayer" />
         <activity android:name=".MultiPlayer" />
-
+        <activity android:name=".spNewGame"></activity>
     </application>
 
 </manifest>
