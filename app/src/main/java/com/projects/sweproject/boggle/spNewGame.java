@@ -1,13 +1,14 @@
 package com.projects.sweproject.boggle;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.Gravity;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
-import android.util.TypedValue;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class spNewGame extends AppCompatActivity {
@@ -44,6 +45,21 @@ public class spNewGame extends AppCompatActivity {
         viewHeight = 0;
         viewWidth = 0;
         wordIn = (TextView)findViewById(R.id.WordView);
+
+        //timer
+
+        final TextView a = (TextView) findViewById(R.id.timer);
+
+        new CountDownTimer(180000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
+            }
+
+            public void onFinish() {
+                a.setText("done!");
+            }
+        }.start();
 
         //Touch grid
         main = (LinearLayout) findViewById(R.id.MainLayout);
