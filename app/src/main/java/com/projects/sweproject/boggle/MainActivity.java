@@ -3,11 +3,16 @@ package com.projects.sweproject.boggle;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -41,23 +46,12 @@ public class MainActivity extends Activity {
         WordDBHelper dbHelper = new WordDBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Create a new map of values, where column names are the keys
-        ContentValues values = new ContentValues();
-        values.put(WordReaderContract.WordEntry.COLUMN_NAME, "word");
 
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(WordReaderContract.WordEntry.TABLE_NAME, null, values);
-
-        //TODO: Figure out how to use the words.sql file to import the rest of the legit words.
-
-        Log.d("Hello there!", "Hello there!");
-
-
-        //Code to evaluate DB expression
+        //Code to evaluate DB expression - we can inspect using this.
 //        String[] projection = {
 //                WordReaderContract.WordEntry._ID,
 //                WordReaderContract.WordEntry.COLUMN_NAME,
-//        }
+//        };
 //
 //        Cursor cursor = db.query(
 //                WordReaderContract.WordEntry.TABLE_NAME,                     // The table to query
@@ -69,10 +63,12 @@ public class MainActivity extends Activity {
 //                null                                 // The sort order
 //        );
 //        List itemIds = new ArrayList<>();
-//        while(cursor.moveToNext()) {
+//        for (int i = 0; i < 10; i++) {
+//            cursor.moveToNext();
 //            String itemId = cursor.getString(
 //                    cursor.getColumnIndexOrThrow(WordReaderContract.WordEntry.COLUMN_NAME));
 //            itemIds.add(itemId);
+//
 //        }
 //        cursor.close();
 //        itemIds.toArray();

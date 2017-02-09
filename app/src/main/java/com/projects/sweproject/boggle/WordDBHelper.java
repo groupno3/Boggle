@@ -5,11 +5,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * Created by rPhilip on 1/31/17.
@@ -26,14 +30,30 @@ public class WordDBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "FeedReader.db";
+    public static final String DATABASE_NAME = "wordtable.db";
+    private Context context;
 
     public WordDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRIES);
+        InputStream inputStream = context.getResources().openRawResource(R.raw.words);
+        List<String> queries = null;
+        try {
+            queries = IOUtils.readLines(inputStream, Charset.defaultCharset());
+        } catch (IOException e) {
+            // blargh
+            System.err.println(e);
+        }
+
+        for (String query : queries) {
+            db.execSQL(query);
+        }
+
         Log.d("onCreate", "onCreate");
+
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
