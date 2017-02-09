@@ -10,7 +10,7 @@ public final class WordReaderContract {
     private WordReaderContract() {}
 
     public static class WordEntry implements BaseColumns {
-        public static final String TABLE_NAME = "words";
+        public static final String TABLE_NAME = "wordtable";
         public static final String COLUMN_NAME = "word";
 
     }
