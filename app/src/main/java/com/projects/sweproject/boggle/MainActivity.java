@@ -19,6 +19,8 @@ public class MainActivity extends Activity {
 
     private Button singleButton;
     private Button multiButton;
+    private Button quit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +44,19 @@ public class MainActivity extends Activity {
                 startActivity(multiPlayerScreen);
             }
         });
+
+        quit = (Button)findViewById(R.id.button4);
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                System.exit(0);
+            }
+        });
+
+
+
+
 
         WordDBHelper dbHelper = new WordDBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
