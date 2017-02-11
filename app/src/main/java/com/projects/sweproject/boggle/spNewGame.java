@@ -1,7 +1,9 @@
 package com.projects.sweproject.boggle;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -50,14 +52,28 @@ public class spNewGame extends AppCompatActivity {
 
         final TextView a = (TextView) findViewById(R.id.timer);
 
-        new CountDownTimer(180000, 1000) {
+        new CountDownTimer(3000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
+                a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + ":"+ String.format("%02d", ((millisUntilFinished/1000)%60)));
             }
 
             public void onFinish() {
-                a.setText("done!");
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
+                alertDialog.setTitle("GAME OVER");
+                alertDialog.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                    }
+                });
+                alertDialog.setNegativeButton("Play Again", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
+
             }
         }.start();
 
