@@ -1,12 +1,15 @@
 package com.projects.sweproject.boggle;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +36,17 @@ public class spNewGame extends AppCompatActivity {
     private TextView wordIn;
     private String letter, word;
 
+    private Button submit_button;
+    private Button cancel_button;
+    private TextView word_to_submit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_layout);
+
+        final WordDBHelper dbHelper = new WordDBHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         //init
         board = new String[4][4];
@@ -45,6 +55,37 @@ public class spNewGame extends AppCompatActivity {
         viewHeight = 0;
         viewWidth = 0;
         wordIn = (TextView)findViewById(R.id.WordView);
+        submit_button = (Button)findViewById(R.id.submit_button);
+        cancel_button = (Button)findViewById(R.id.cancel_button);
+        word_to_submit = (TextView)findViewById(R.id.WordView1);
+
+        //submit button
+
+        submit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                word_to_submit.setText("hello");
+
+                String input = word_to_submit.getText().toString();
+
+                boolean isValidWord = dbHelper.getWord(input);
+
+                if (isValidWord == true)
+                    Toast.makeText(getApplicationContext(), "true", Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(getApplicationContext(), "false", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        cancel_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                word_to_submit.setText("");
+
+            }
+        });
+
 
         //timer
 
