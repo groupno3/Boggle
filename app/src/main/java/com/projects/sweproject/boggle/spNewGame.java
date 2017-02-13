@@ -46,21 +46,6 @@ public class spNewGame extends AppCompatActivity {
         viewWidth = 0;
         wordIn = (TextView)findViewById(R.id.WordInput);
 
-        //timer
-/*
-        final TextView a = (TextView) findViewById(R.id.timer);
-
-        new CountDownTimer(180000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
-            }
-
-            public void onFinish() {
-                a.setText("done!");
-            }
-        }.start();
-*/
         //Touch grid
         main = (LinearLayout) findViewById(R.id.MainLayout);
         main.post(new Runnable() {
@@ -181,7 +166,7 @@ public class spNewGame extends AppCompatActivity {
         // clear word
         word = "";
         //wordIn.setText("");
-        wordIn.append(" ");
+        //wordIn.append(" ");
     }
 
     public boolean onTouchEvent(MotionEvent event) {
