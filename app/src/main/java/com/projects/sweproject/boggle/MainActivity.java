@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private Button singleButton;
-    private Button multiButton;
-    private Button quit;
+    private ImageButton singleButton;
+    private ImageButton multiButton;
+    private ImageButton quit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
 
-        singleButton = (Button) findViewById(R.id.button);
+        singleButton = (ImageButton) findViewById(R.id.button);
         singleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -36,7 +37,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        multiButton = (Button) findViewById(R.id.button2);
+        multiButton = (ImageButton) findViewById(R.id.button2);
         multiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,7 +46,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        quit = (Button)findViewById(R.id.button4);
+        quit = (ImageButton)findViewById(R.id.button4);
         quit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
