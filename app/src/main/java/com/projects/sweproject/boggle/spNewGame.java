@@ -94,10 +94,8 @@ public class spNewGame extends AppCompatActivity {
             for (int j = 0; j < 4; ++j) {
                 sq = (SquareTextView) findViewById(matrix[i][j]);
                 touchPath[i][j] = 0;
-                // Hardcoded board.
-                String [] str = {"a","b","c","d","e","f",
-                        "g","h","i","j","k","l",
-                        "m","n","o","p","q"};
+                BoardCreator bc = new BoardCreator();
+                String[] str = bc.getBoardLayout();
                 board[i][j] = str[i*4+j];
 
                 sq.setText(board[i][j], TextView.BufferType.EDITABLE);
