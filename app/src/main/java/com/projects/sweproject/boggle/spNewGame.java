@@ -21,7 +21,7 @@ import android.widget.Toast;
 import static java.security.AccessController.getContext;
 
 public class spNewGame extends Activity {
-
+    static boolean active = false;
     int[][] matrix = {{R.id.Point00, R.id.Point01, R.id.Point02, R.id.Point03},
             {R.id.Point10, R.id.Point11, R.id.Point12, R.id.Point13},
             {R.id.Point20, R.id.Point21, R.id.Point22, R.id.Point23},
@@ -71,7 +71,7 @@ public class spNewGame extends Activity {
             public void onFinish() {
 
 
-                a.setText("Time's up!!");
+                a.setText("Time's up!");
 
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
@@ -97,7 +97,8 @@ public class spNewGame extends Activity {
                     }
                 });
                 alertDialog.create();
-                alertDialog.show();
+                if(active)
+                    alertDialog.show();
 
             }
         }.start();
@@ -217,4 +218,20 @@ public class spNewGame extends Activity {
 
         return true;
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        active = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // do something on back.
+        super.onBackPressed();
+        active = false;
+    }
+
+
 }
