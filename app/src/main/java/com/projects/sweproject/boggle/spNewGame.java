@@ -1,6 +1,7 @@
 package com.projects.sweproject.boggle;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,11 +10,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import static java.security.AccessController.getContext;
 
 public class spNewGame extends Activity {
 
@@ -40,7 +45,10 @@ public class spNewGame extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.game_layout);
+
+
 
         //init
         board = new String[4][4];
@@ -54,16 +62,21 @@ public class spNewGame extends Activity {
 
         final TextView a = (TextView) findViewById(R.id.timer);
 
-        new CountDownTimer(180000, 1000) {
+        new CountDownTimer(5000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + ":"+ String.format("%02d", ((millisUntilFinished/1000)%60)));
             }
 
             public void onFinish() {
+
+
+                a.setText("Time's up!!");
+
+
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
                 alertDialog.setTitle("GAME OVER");
-                alertDialog.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         //quit go back to Mainacitivyt
@@ -72,7 +85,7 @@ public class spNewGame extends Activity {
 
                     }
                 });
-                alertDialog.setNegativeButton("Play Again", new DialogInterface.OnClickListener() {
+                alertDialog.setNegativeButton("PLAY AGAIN", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
                         //restart the screen
