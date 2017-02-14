@@ -1,5 +1,6 @@
 package com.projects.sweproject.boggle;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class spNewGame extends AppCompatActivity {
+public class spNewGame extends Activity {
 
     int[][] matrix = {{R.id.Point00, R.id.Point01, R.id.Point02, R.id.Point03},
             {R.id.Point10, R.id.Point11, R.id.Point12, R.id.Point13},
