@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -128,16 +129,26 @@ public class spNewGame extends AppCompatActivity {
             }
         });
 
+
         TypedValue tv = new TypedValue();
         if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
         {
             gridY =
                     TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
         }
-        //gridY += getResources().getIdentifier("status_bar_height", "dimen", "android");
-
+        gridY += getStatusBarHeight();
+        Log.i("*** TAG :: ","gridY = "+ gridY);
         //start
         startGame();
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     private void startGame(){
