@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.util.*;
 
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SinglePlayer extends Activity {
 
-    Button easy;
+    ImageButton easy;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +41,7 @@ public class SinglePlayer extends Activity {
         */
 
         // Temp start board class.
-        easy = (Button) findViewById(R.id.button1);
+        easy = (ImageButton) findViewById(R.id.button1);
         easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

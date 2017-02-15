@@ -1,18 +1,27 @@
 package com.projects.sweproject.boggle;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class spNewGame extends AppCompatActivity {
+import static java.security.AccessController.getContext;
 
+public class spNewGame extends Activity {
+    static boolean active = false;
     int[][] matrix = {{R.id.Point00, R.id.Point01, R.id.Point02, R.id.Point03},
             {R.id.Point10, R.id.Point11, R.id.Point12, R.id.Point13},
             {R.id.Point20, R.id.Point21, R.id.Point22, R.id.Point23},
@@ -36,7 +45,10 @@ public class spNewGame extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.game_layout);
+
+
 
         //init
         board = new String[4][4];
@@ -45,7 +57,6 @@ public class spNewGame extends AppCompatActivity {
         viewHeight = 0;
         viewWidth = 0;
         wordIn = (TextView)findViewById(R.id.WordInput);
-
         //Touch grid
         main = (LinearLayout) findViewById(R.id.MainLayout);
         main.post(new Runnable() {
@@ -188,4 +199,20 @@ public class spNewGame extends AppCompatActivity {
 
         return true;
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        active = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // do something on back.
+        super.onBackPressed();
+        active = false;
+    }
+
+
 }
