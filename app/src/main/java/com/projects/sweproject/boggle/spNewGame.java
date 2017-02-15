@@ -56,78 +56,33 @@ public class spNewGame extends Activity {
         touchPath = new int[4][4];
         viewHeight = 0;
         viewWidth = 0;
-        wordIn = (TextView)findViewById(R.id.WordView);
-
-        //timer
-
-        final TextView a = (TextView) findViewById(R.id.timer);
-
-        new CountDownTimer(5000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + ":"+ String.format("%02d", ((millisUntilFinished/1000)%60)));
-            }
-
-            public void onFinish() {
-
-
-                a.setText("Time's up!");
-
-
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
-                alertDialog.setTitle("GAME OVER");
-                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK button
-                        //quit go back to Mainacitivyt
-                        Intent intent = new Intent(spNewGame.this, MainActivity.class);
-                        startActivity(intent);
-
-                    }
-                });
-                alertDialog.setNegativeButton("PLAY AGAIN", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                        //restart the screen
-                        finish();
-                        startActivity(getIntent());
-
-
-
-                    }
-                });
-                alertDialog.create();
-                if(active)
-                    alertDialog.show();
-
-            }
-        }.start();
-
+        wordIn = (TextView)findViewById(R.id.WordInput);
         //Touch grid
         main = (LinearLayout) findViewById(R.id.MainLayout);
-        main.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    public void onGlobalLayout() {
-                        SquareLayout grid = (SquareLayout) findViewById(R.id.SquareLayout);
-                        gridX = (int)grid.getX();
+        main.post(new Runnable() {
+            @Override
+            public void run() {
+                SquareLayout box = (SquareLayout) findViewById(R.id.SquareLayout);
+                gridX = (int)box.getX();
 
-                        sq = (SquareTextView) findViewById(matrix[0][0]);
-                        viewWidth = sq.getWidth();
-                        viewHeight = sq.getHeight();
-                        offset = (viewWidth * 2) / 6;
+                sq = (SquareTextView) findViewById(matrix[0][0]);
+                viewWidth = sq.getWidth();
+                viewHeight = sq.getHeight();
 
-                        int x;
-                        int y = 0;
-                        for(int i = 0; i < 4; ++i){
-                            x = 0;
-                            for(int j = 0; j < 4; ++j){
-                                lMatrix[i][j] = new Point(x, y);
-                                x = x + viewWidth;
-                            }
-                            y = y + viewHeight;
-                        }
+                offset = (viewWidth * 2) / 6;
+
+                int x;
+                int y = 0;
+                for(int i = 0; i < 4; ++i){
+                    x = 0;
+                    for(int j = 0; j < 4; ++j){
+                        lMatrix[i][j] = new Point(x, y);
+                        x = x + viewWidth;
                     }
-                });
+                    y = y + viewHeight;
+                }
+            }
+        });
 
         TypedValue tv = new TypedValue();
         if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
@@ -135,7 +90,7 @@ public class spNewGame extends Activity {
             gridY =
                     TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
         }
-        gridY += getResources().getIdentifier("status_bar_height", "dimen", "android");
+        //gridY += getResources().getIdentifier("status_bar_height", "dimen", "android");
 
         //start
         startGame();
@@ -146,30 +101,49 @@ public class spNewGame extends Activity {
         word = "";
         wordIn.setText(word);
         //gen board
-        for(int i=0;i<4;++i){
-            for(int j=0;j<4;++j){
+        for(int i=0;i<4;++i) {
+            for (int j = 0; j < 4; ++j) {
                 sq = (SquareTextView) findViewById(matrix[i][j]);
                 touchPath[i][j] = 0;
-                //This can be changed anytime.
-                board[i][j] = "a";
+                BoardCreator bc = new BoardCreator();
+                String[] str = bc.getBoardLayout();
+                board[i][j] = str[i*4+j];
 
                 sq.setText(board[i][j], TextView.BufferType.EDITABLE);
+
             }
         }
+        //start timer
+        // TODO: create motion lock
+        final TextView a = (TextView) findViewById(R.id.timer);
+
+        new CountDownTimer(180000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
+            }
+
+            public void onFinish() {
+                a.setText("done!");
+            }
+        }.start();
 
     }
 
     private void track(int x, int y){
         int pointX;
         int pointY;
-
+        //wordIn.setText("");
+        //wordIn.append("X:"+x+" Y:"+y+"\n");
+        //wordIn.append("GX:"+gridX+"GY: "+gridY+" OS:"+offset+" VW:"+viewWidth+"\n");
         for(int i = 0; i < 4; ++i){
             for(int j = 0; j < 4; ++j){
+                //wordIn.append("|"+lMatrix[i][j].x+","+lMatrix[i][j].y+"|");
                 pointX = lMatrix[i][j].x + gridX;
                 pointY = lMatrix[i][j].y + gridY;
 
                 if(x > pointX + offset && x < pointX + viewWidth - offset){
-                    if(y > pointY + offset && y < pointY + viewHeight -offset){
+                    if(y > pointY + offset && y < pointY + viewHeight - offset){
                         if(touchPath[i][j] == 0){
 
                             sq = (SquareTextView) findViewById(matrix[i][j]);
@@ -179,7 +153,7 @@ public class spNewGame extends Activity {
 
                             word = word + letter;
                             wordIn.setText(word);
-                            wordIn.setGravity(Gravity.LEFT);
+                            //wordIn.setGravity(Gravity.LEFT);
 
                             //un highlight
 
@@ -192,7 +166,16 @@ public class spNewGame extends Activity {
     }
 
     public void submit(){
-        //do something with input word here.
+        // clear touchPath
+        for(int i = 0; i < 4; ++i){
+            for(int j = 0; j < 4; ++j){
+                touchPath[i][j] = 0;
+            }
+        }
+        // clear word
+        word = "";
+        //wordIn.setText("");
+        //wordIn.append(" ");
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -203,12 +186,10 @@ public class spNewGame extends Activity {
         switch (EA) {
             case MotionEvent.ACTION_DOWN:
                 track(X, Y);
-                Toast.makeText(this, "ACTION_DOWN "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 track(X, Y);
-                Toast.makeText(this, "ACTION_MOVE "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
                 break;
 
             case MotionEvent.ACTION_UP:
