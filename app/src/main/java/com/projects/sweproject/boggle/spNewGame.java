@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class spNewGame extends AppCompatActivity {
 
     int[][] matrix = {{R.id.Point00, R.id.Point01, R.id.Point02, R.id.Point03},
@@ -45,7 +47,8 @@ public class spNewGame extends AppCompatActivity {
     private LinearLayout main;
     private SquareTextView sq;
     private TextView wordIn;
-    private String letter, word;
+    private String letter, word,letter_path="";
+    private ArrayList<String> selected_words = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +75,25 @@ public class spNewGame extends AppCompatActivity {
                 boolean isValidWord = dbHelper.getWord(input);
 
                 if (isValidWord == true) {
-                    Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
-                    score = score +input.length();
-                    scoreView.setText("Your Score: "+score);
+
+                    if(selected_words.contains(letter_path)==false) {
+                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                        selected_words.add(letter_path);
+                        letter_path ="";
+                        score = score + input.length();
+                        scoreView.setText("Your Score: " + score);
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
+                        letter_path ="";
+                    }
 
                 }
-                else
+                else {
                     Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
+                    letter_path ="";
+
+                }
 
                 wordIn.setText("");
             }
@@ -219,6 +234,7 @@ public class spNewGame extends AppCompatActivity {
     private void track(int x, int y){
         int pointX;
         int pointY;
+        //letter_path = "";
         //wordIn.setText("");
         //wordIn.append("X:"+x+" Y:"+y+"\n");
         //wordIn.append("GX:"+gridX+"GY: "+gridY+" OS:"+offset+" VW:"+viewWidth+"\n");
@@ -238,6 +254,7 @@ public class spNewGame extends AppCompatActivity {
                             //highlight
 
                             word = word + letter;
+                            letter_path = letter_path + i+j;
                             wordIn.setText(word);
                             //wordIn.setGravity(Gravity.LEFT);
 
