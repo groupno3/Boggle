@@ -3,6 +3,7 @@ package com.projects.sweproject.boggle;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
@@ -96,6 +97,8 @@ public class spNewGame extends AppCompatActivity {
                 }
 
                 wordIn.setText("");
+
+                resetHighlight();
             }
 
 
@@ -105,6 +108,7 @@ public class spNewGame extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 wordIn.setText("");
+                resetHighlight();
             }
         });
 
@@ -252,6 +256,7 @@ public class spNewGame extends AppCompatActivity {
                             letter = sq.getText().toString();
 
                             //highlight
+                            sq.setBackgroundColor(Color.RED);
 
                             word = word + letter;
                             letter_path = letter_path + i+j;
@@ -268,6 +273,15 @@ public class spNewGame extends AppCompatActivity {
         }
     }
 
+    private void resetHighlight(){
+        for(int i = 0; i < 4; ++i){
+            for(int j = 0; j < 4; ++j){
+                sq = (SquareTextView) findViewById(matrix[i][j]);
+
+                sq.setBackgroundColor(Color.WHITE);
+            }
+        }
+    }
     public void submit(){
         // clear touchPath
         for(int i = 0; i < 4; ++i){
@@ -279,6 +293,7 @@ public class spNewGame extends AppCompatActivity {
         word = "";
         //wordIn.setText("");
         //wordIn.append(" ");
+        //resetHighlight();
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -286,6 +301,7 @@ public class spNewGame extends AppCompatActivity {
         int X = (int) event.getX();
         int Y = (int) event.getY();
         int EA = event.getAction();
+        //Log.d("*** MotionEvent :: "," Event: "+EA);
         switch (EA) {
             case MotionEvent.ACTION_DOWN:
                 track(X, Y);
