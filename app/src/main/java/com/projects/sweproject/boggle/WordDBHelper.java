@@ -1,17 +1,15 @@
 package com.projects.sweproject.boggle;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -63,6 +61,22 @@ public class WordDBHelper extends SQLiteOpenHelper {
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public boolean getWord(String userInput){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(WordReaderContract.WordEntry.TABLE_NAME, new String[] {"word"}, "word=?", new String[] {userInput}, null, null, null, null);
+
+        if (cursor.getCount() > 0){
+            cursor.close();
+            return true;
+
+        }
+        else{
+            cursor.close();
+            return false;
+        }
     }
 
 

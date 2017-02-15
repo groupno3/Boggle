@@ -38,7 +38,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point01"
@@ -47,7 +48,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point02"
@@ -56,7 +58,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point03"
@@ -65,7 +68,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
 
             </TableRow>
@@ -85,7 +89,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point11"
@@ -94,7 +99,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point12"
@@ -103,7 +109,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point13"
@@ -112,7 +119,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
             </TableRow>
 
@@ -132,7 +140,9 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:clickable="true"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point21"
@@ -141,7 +151,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point22"
@@ -150,7 +161,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point23"
@@ -159,7 +171,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
             </TableRow>
 
@@ -179,7 +192,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point31"
@@ -188,7 +202,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point32"
@@ -197,7 +212,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
                 <com.projects.sweproject.boggle.SquareTextView
                     android:id="@+id/Point33"
@@ -206,7 +222,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="36sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal|bold"
+                    android:background="@color/white"/>
 
             </TableRow>
 
@@ -214,50 +231,69 @@
 
     </com.projects.sweproject.boggle.SquareLayout>
 
-    <TableLayout
-        android:id="@+id/UserLayout"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp">
+        android:layout_height="match_parent">
 
-        <TableRow
-            android:id="@+id/ColumnLayout"
+        <TextView
+            android:id="@+id/WordInput"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:text=""
+            android:textSize="20dp"
+            android:layout_margin="10dp"/>
 
-            <RelativeLayout
-                android:id="@+id/ButtonLayout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/WordInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:gravity="center"
-                    android:text=""
-                    android:textSize="12sp" />
+            <TextView
+                android:id="@+id/timer"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:gravity="left|center"
+                android:layout_weight="1"/>
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:id="@+id/score_textView"
+                android:layout_weight="1"
+                android:gravity="right"/>
+        </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/timer"
-                        android:textSize="20dp"
-                        android:textStyle="bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="20dp"
-                        android:gravity="right"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                </LinearLayout>
-            </RelativeLayout>
-        </TableRow>
-    </TableLayout>
+            <Button
+                android:text="Submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/submit_button"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:layout_margin="5dp"/>
+
+            <Button
+                android:text="Cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cancel_button"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:layout_margin="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>
