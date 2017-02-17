@@ -81,8 +81,7 @@ public class spNewGame extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
                         selected_words.add(letter_path);
                         letter_path ="";
-                        score = score + input.length();
-                        scoreView.setText("Your Score: " + score);
+                        scoreView.setText("Your Score: " + calculateScore(input));
                     }
                     else{
                         Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
@@ -331,6 +330,31 @@ public class spNewGame extends AppCompatActivity {
         // do something on back.
         super.onBackPressed();
         active = false;
+    }
+
+    public int calculateScore(String word){
+
+        if (word.length() == 3 || word.length() == 4){
+            score++;
+        }
+
+        else if (word.length() == 5 ){
+            score = score + 2;
+        }
+
+        else if (word.length() == 6 ){
+            score = score + 3;
+        }
+
+        else if (word.length() == 7 ){
+            score = score + 5;
+        }
+
+        else if (word.length() >= 8 ){
+            score = score + 10;
+        }
+
+        return score;
     }
 
 }
