@@ -49,7 +49,7 @@ public class spNewGame extends AppCompatActivity {
     private SquareTextView sq;
     private TextView wordIn;
     private String letter, word,letter_path="";
-    private ArrayList<String> selected_words = new ArrayList();
+    private ArrayList<String> selected_words;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,8 @@ public class spNewGame extends AppCompatActivity {
 
         submit_button = (Button) findViewById(R.id.submit_button);
         cancel_button = (Button) findViewById(R.id.cancel_button);
+
+        selected_words = new ArrayList();
 
         final WordDBHelper dbHelper = new WordDBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -75,28 +77,26 @@ public class spNewGame extends AppCompatActivity {
 
                 boolean isValidWord = dbHelper.getWord(input);
 
+                Toast.makeText(getApplicationContext(),letter_path,Toast.LENGTH_SHORT).show();
+
                 if (isValidWord == true) {
 
-                    if(selected_words.contains(letter_path)==false) {
-                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
-                        selected_words.add(letter_path);
-                        letter_path ="";
-                        scoreView.setText("Your Score: " + calculateScore(input));
+                    if(selected_words.contains(letter_path)) {
+                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
-                        letter_path ="";
+                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                        selected_words.add(letter_path);
+                        scoreView.setText("Your Score: " + calculateScore(input));
                     }
 
+                    letter_path ="";
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
                     letter_path ="";
-
                 }
-
                 wordIn.setText("");
-
                 resetHighlight();
             }
 
@@ -107,6 +107,7 @@ public class spNewGame extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 wordIn.setText("");
+                letter_path ="";
                 resetHighlight();
             }
         });
@@ -172,6 +173,7 @@ public class spNewGame extends AppCompatActivity {
     private void startGame(){
         //clear
         word = "";
+        letter_path="";
         wordIn.setText(word);
         //gen board
         for(int i=0;i<4;++i) {
@@ -290,6 +292,7 @@ public class spNewGame extends AppCompatActivity {
         }
         // clear word
         word = "";
+        //letter_path="";
         //wordIn.setText("");
         //wordIn.append(" ");
         //resetHighlight();
