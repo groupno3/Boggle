@@ -1,9 +1,12 @@
 package com.projects.sweproject.boggle;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +23,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class spNewGame extends AppCompatActivity {
+
+
+    // The following are used for the shake detection
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
+
+
+
 
     int[][] matrix = {{R.id.Point00, R.id.Point01, R.id.Point02, R.id.Point03},
             {R.id.Point10, R.id.Point11, R.id.Point12, R.id.Point13},
@@ -56,6 +68,32 @@ public class spNewGame extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_layout);
 
+
+        // ShakeDetector initialization
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+				/*
+				 * The following method, "handleShakeEvent(count):" is a stub //
+				 * method you would use to setup whatever you want done once the
+				 * device has been shook.
+				 */
+                finish();
+                startActivity(getIntent());
+
+            }
+
+
+
+        });
+
+
+
         scoreView = (TextView) findViewById(R.id.score_textView);
 
         submit_button = (Button) findViewById(R.id.submit_button);
@@ -81,8 +119,7 @@ public class spNewGame extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
                         selected_words.add(letter_path);
                         letter_path ="";
-                        score = score + input.length();
-                        scoreView.setText("Your Score: " + score);
+                        scoreView.setText("Your Score: " + calculateScore(input));
                     }
                     else{
                         Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
@@ -160,6 +197,7 @@ public class spNewGame extends AppCompatActivity {
         //start
         startGame();
     }
+
 
     public int getStatusBarHeight() {
         int result = 0;
@@ -263,6 +301,7 @@ public class spNewGame extends AppCompatActivity {
                             wordIn.setText(word);
                             //wordIn.setGravity(Gravity.LEFT);
 
+
                             //un highlight
 
                             touchPath[i][j] = 1;
@@ -324,6 +363,7 @@ public class spNewGame extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         active = true;
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
@@ -332,5 +372,40 @@ public class spNewGame extends AppCompatActivity {
         super.onBackPressed();
         active = false;
     }
+
+    public int calculateScore(String word){
+
+        if (word.length() == 3 || word.length() == 4){
+            score++;
+        }
+
+        else if (word.length() == 5 ){
+            score = score + 2;
+        }
+
+        else if (word.length() == 6 ){
+            score = score + 3;
+        }
+
+        else if (word.length() == 7 ){
+            score = score + 5;
+        }
+
+        else if (word.length() >= 8 ){
+            score = score + 10;
+        }
+
+        return score;
+    }
+
+
+    @Override
+    public void onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mSensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
+    }
+
+
 
 }
