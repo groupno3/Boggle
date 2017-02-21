@@ -24,22 +24,6 @@ public class SinglePlayer extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.single_player);
 
-        /* needs to be moved to start after the board is created
-
-        final TextView a = (TextView) findViewById(R.id.timer);
-
-        new CountDownTimer(180000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + " minute and "+ ((millisUntilFinished/1000)%60) + " seconds");
-            }
-
-            public void onFinish() {
-                a.setText("done!");
-            }
-        }.start();
-        */
-
         // Temp start board class.
         easy = (ImageButton) findViewById(R.id.button1);
         easy.setOnClickListener(new View.OnClickListener() {

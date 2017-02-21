@@ -24,15 +24,6 @@ import java.util.ArrayList;
 
 public class spNewGame extends AppCompatActivity {
 
-
-    // The following are used for the shake detection
-    private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
-    private ShakeDetector mShakeDetector;
-
-
-
-
     int[][] matrix = {{R.id.Point00, R.id.Point01, R.id.Point02, R.id.Point03},
             {R.id.Point10, R.id.Point11, R.id.Point12, R.id.Point13},
             {R.id.Point20, R.id.Point21, R.id.Point22, R.id.Point23},
@@ -54,14 +45,19 @@ public class spNewGame extends AppCompatActivity {
 
     int score = 0;
 
-
+    BoardCreator bc;
     String [][] board;
 
     private LinearLayout main;
     private SquareTextView sq;
     private TextView wordIn;
+    private TextView timer;
     private String letter, word,letter_path="";
-    private ArrayList<String> selected_words = new ArrayList();
+    private ArrayList<String> selected_words;
+    // The following are used for the shake detection
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +153,7 @@ public class spNewGame extends AppCompatActivity {
         viewHeight = 0;
         viewWidth = 0;
         wordIn = (TextView)findViewById(R.id.WordInput);
+        timer = (TextView) findViewById(R.id.timer);
 
         //Touch grid
         main = (LinearLayout) findViewById(R.id.MainLayout);
@@ -212,12 +209,13 @@ public class spNewGame extends AppCompatActivity {
         //clear
         word = "";
         wordIn.setText(word);
+        selected_words = new ArrayList<String>();
+        bc = new BoardCreator();
         //gen board
         for(int i=0;i<4;++i) {
             for (int j = 0; j < 4; ++j) {
                 sq = (SquareTextView) findViewById(matrix[i][j]);
                 touchPath[i][j] = 0;
-                BoardCreator bc = new BoardCreator();
                 String[] str = bc.getBoardLayout();
                 board[i][j] = str[i*4+j];
 
@@ -227,18 +225,16 @@ public class spNewGame extends AppCompatActivity {
         }
         //start timer
         // TODO: create motion lock
-        final TextView a = (TextView) findViewById(R.id.timer);
-
         new CountDownTimer(180000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
+                timer.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
             }
 
             public void onFinish() {
 
 
-                a.setText("Time's up!");
+                timer.setText("Time's up!");
 
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
@@ -321,6 +317,8 @@ public class spNewGame extends AppCompatActivity {
             }
         }
     }
+
+    //TODO This function should be used properly
     public void submit(){
         // clear touchPath
         for(int i = 0; i < 4; ++i){
@@ -405,7 +403,5 @@ public class spNewGame extends AppCompatActivity {
         mSensorManager.unregisterListener(mShakeDetector);
         super.onPause();
     }
-
-
 
 }
