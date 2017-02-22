@@ -33,6 +33,8 @@ public class spNewGame extends AppCompatActivity {
     int viewWidth;
     int offset;
 
+    int start_timer = 180000;
+
     static boolean active = false;
 
     private TextView scoreView;
@@ -40,7 +42,7 @@ public class spNewGame extends AppCompatActivity {
     Button submit_button;
     Button cancel_button;
 
-    int score = 0;
+    int score;
 
 
     String [][] board;
@@ -48,8 +50,10 @@ public class spNewGame extends AppCompatActivity {
     private LinearLayout main;
     private SquareTextView sq;
     private TextView wordIn;
-    private String letter, word,letter_path="";
+    private String letter, word,letter_path;
     private ArrayList<String> selected_words;
+
+    private TextView a;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +65,11 @@ public class spNewGame extends AppCompatActivity {
         submit_button = (Button) findViewById(R.id.submit_button);
         cancel_button = (Button) findViewById(R.id.cancel_button);
 
-        selected_words = new ArrayList();
+         a = (TextView) findViewById(R.id.timer);
+
 
         final WordDBHelper dbHelper = new WordDBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        scoreView.setText("Your Score: "+score);
 
 
         submit_button.setOnClickListener(new View.OnClickListener() {
@@ -173,8 +176,14 @@ public class spNewGame extends AppCompatActivity {
     private void startGame(){
         //clear
         word = "";
-        letter_path="";
         wordIn.setText(word);
+
+        score=0;
+        scoreView.setText("Your Score: "+score);
+
+        letter_path="";
+        selected_words = new ArrayList();
+
         //gen board
         for(int i=0;i<4;++i) {
             for (int j = 0; j < 4; ++j) {
@@ -189,49 +198,9 @@ public class spNewGame extends AppCompatActivity {
             }
         }
         //start timer
+        startTimer(start_timer);
         // TODO: create motion lock
-        final TextView a = (TextView) findViewById(R.id.timer);
 
-        new CountDownTimer(180000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
-            }
-
-            public void onFinish() {
-
-
-                a.setText("Time's up!");
-
-
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
-                alertDialog.setTitle("GAME OVER");
-                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK button
-                        //quit go back to Mainacitivyt
-                        Intent intent = new Intent(spNewGame.this, MainActivity.class);
-                        startActivity(intent);
-
-                    }
-                });
-                alertDialog.setNegativeButton("PLAY AGAIN", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                        //restart the screen
-                        finish();
-                        startActivity(getIntent());
-
-
-
-                    }
-                });
-                alertDialog.create();
-                if(active)
-                    alertDialog.show();
-
-            }
-        }.start();
 
 
     }
@@ -358,6 +327,50 @@ public class spNewGame extends AppCompatActivity {
         }
 
         return score;
+    }
+
+    public void startTimer(int timer){
+
+        new CountDownTimer(timer, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
+            }
+
+            public void onFinish() {
+
+
+                a.setText("Time's up!");
+
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
+                alertDialog.setTitle("GAME OVER");
+                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        //quit go back to Mainacitivyt
+                        Intent intent = new Intent(spNewGame.this, MainActivity.class);
+                        startActivity(intent);
+
+                    }
+                });
+                alertDialog.setNegativeButton("PLAY AGAIN", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        //restart the screen
+                        finish();
+                        startActivity(getIntent());
+
+
+
+                    }
+                });
+                alertDialog.create();
+                if(active)
+                    alertDialog.show();
+
+            }
+        }.start();
     }
 
 }
