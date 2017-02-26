@@ -7,45 +7,49 @@ package com.projects.sweproject.boggle;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.util.*;
-
-import java.util.concurrent.TimeUnit;
 
 public class SinglePlayer extends Activity {
 
     ImageButton easy;
+    ImageButton medium;
+    ImageButton hard;
+    String Level;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.single_player);
 
-        /* needs to be moved to start after the board is created
-
-        final TextView a = (TextView) findViewById(R.id.timer);
-
-        new CountDownTimer(180000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                a.setText("Time remaining: " + ((millisUntilFinished/1000)/60)  + " minute and "+ ((millisUntilFinished/1000)%60) + " seconds");
-            }
-
-            public void onFinish() {
-                a.setText("done!");
-            }
-        }.start();
-        */
-
         // Temp start board class.
         easy = (ImageButton) findViewById(R.id.button1);
+        medium = (ImageButton) findViewById(R.id.button2);
+        hard = (ImageButton) findViewById(R.id.button3);
+
         easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Level = "Easy";
+              Intent in = new Intent(getApplicationContext(), ShakeActivity.class);
+                startActivity(in);
+            }
+        });
+
+        medium.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Level = "Medium";
                 Intent in = new Intent(getApplicationContext(), ShakeActivity.class);
+                startActivity(in);
+            }
+        });
+
+        hard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Level = "Hard";
+               Intent in = new Intent(getApplicationContext(), ShakeActivity.class);
                 startActivity(in);
             }
         });

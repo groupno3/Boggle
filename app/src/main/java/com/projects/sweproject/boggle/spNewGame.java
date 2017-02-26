@@ -15,10 +15,12 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -40,22 +42,29 @@ public class spNewGame extends AppCompatActivity {
 
     private TextView scoreView;
 
-    Button submit_button;
-    Button cancel_button;
-
     int score = 0;
+    int word_count = 0;
 
-
+    BoardCreator bc;
     String [][] board;
 
     private LinearLayout main;
     private SquareTextView sq;
     private TextView wordIn;
+    private TextView timer;
     private String letter, word,letter_path="";
-    private ArrayList<String> selected_words = new ArrayList();
+
+    private ArrayList<String>;
+    // The following are used for the shake detection
+
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
+
+    private DatabaseReference mDatabaseReference;
+
+    private WordDBHelper dbHelper;
+    SQLiteDatabase db;
 
 
     @Override
@@ -63,65 +72,19 @@ public class spNewGame extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_layout);
 
+        //get selected level
+        Bundle extras = getIntent().getExtras();
+        String Level = extras.getString("LEVEL");
 
+        dbHelper = new WordDBHelper(getApplicationContext());
+        db = dbHelper.getWritableDatabase();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-
+        Toast.makeText(getApplicationContext(), "Level: "+ Level, Toast.LENGTH_LONG).show();
+        // ShakeDetector initialization
 
         scoreView = (TextView) findViewById(R.id.score_textView);
-
-        submit_button = (Button) findViewById(R.id.submit_button);
-        cancel_button = (Button) findViewById(R.id.cancel_button);
-
-        final WordDBHelper dbHelper = new WordDBHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         scoreView.setText("Your Score: "+score);
-
-
-        submit_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String input = wordIn.getText().toString();
-
-                boolean isValidWord = dbHelper.getWord(input);
-
-                if (isValidWord == true) {
-
-                    if(selected_words.contains(letter_path)==false) {
-                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
-                        selected_words.add(letter_path);
-                        letter_path ="";
-                        scoreView.setText("Your Score: " + calculateScore(input));
-                    }
-                    else{
-                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
-                        letter_path ="";
-                    }
-
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
-                    letter_path ="";
-
-                }
-
-                wordIn.setText("");
-
-                resetHighlight();
-            }
-
-
-        });
-
-        cancel_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wordIn.setText("");
-                resetHighlight();
-            }
-        });
-
 
         //init
         board = new String[4][4];
@@ -130,6 +93,7 @@ public class spNewGame extends AppCompatActivity {
         viewHeight = 0;
         viewWidth = 0;
         wordIn = (TextView)findViewById(R.id.WordInput);
+        timer = (TextView) findViewById(R.id.timer);
 
         //Touch grid
         main = (LinearLayout) findViewById(R.id.MainLayout);
@@ -187,14 +151,22 @@ public class spNewGame extends AppCompatActivity {
         System.out.println("KADJKDJLAJDL") ;
 
         word = "";
+        letter_path ="";
         wordIn.setText(word);
+        selected_words = new ArrayList<String>();
+        bc = new BoardCreator();
         //gen board
         for(int i=0;i<4;++i) {
             for (int j = 0; j < 4; ++j) {
                 sq = (SquareTextView) findViewById(matrix[i][j]);
                 touchPath[i][j] = 0;
-                BoardCreator bc = new BoardCreator();
                 String[] str = bc.getBoardLayout();
+                MultiPlayerBoard mpb = new MultiPlayerBoard(str);
+
+                //stores the current board to fire base
+                mDatabaseReference.child("Board").setValue(mpb);
+
+
                 board[i][j] = str[i*4+j];
 
                 sq.setText(board[i][j], TextView.BufferType.EDITABLE);
@@ -203,21 +175,21 @@ public class spNewGame extends AppCompatActivity {
         }
         //start timer
         // TODO: create motion lock
-        final TextView a = (TextView) findViewById(R.id.timer);
-
         new CountDownTimer(180000, 1000) {
 
 
 
 
             public void onTick(long millisUntilFinished) {
-                a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
+
+            a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
+
             }
 
             public void onFinish() {
 
 
-                a.setText("Time's up!");
+                timer.setText("Time's up!");
 
 
                 alertDialog = new AlertDialog.Builder(spNewGame.this);
@@ -291,6 +263,8 @@ public class spNewGame extends AppCompatActivity {
             }
         }
     }
+
+    //TODO This function should be used properly
     public void submit(){
         // clear touchPath
         for(int i = 0; i < 4; ++i){
@@ -368,8 +342,58 @@ public class spNewGame extends AppCompatActivity {
     }
 
 
+    public  void clickOnSubmitButton(View view) {
+
+            String input = wordIn.getText().toString();
+
+            if(input.length()<3){
+                Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
+            }
+            else {
 
 
+                boolean isValidWord = dbHelper.getWord(input);
+
+                if (isValidWord == true) {
+
+                    if (selected_words.contains(letter_path) == false) {
+                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                        selected_words.add(letter_path);
+                        word_count++;
+                        scoreView.setText("Your Score: " + calculateScore(input));
+                    } else {
+                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+            wordIn.setText("");
+            letter_path = "";
+            resetHighlight();
+        }
+
+    public  void clickOnCancelButton(View view) {
+        wordIn.setText("");
+        letter_path ="";
+        resetHighlight();
+    }
+
+
+    @Override
+    public void onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mSensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
+    }
+
+    public static Intent newIntent(Context packageContext, String gameLevel) {
+        Intent i = new Intent( packageContext, spNewGame.class);
+        i.putExtra("LEVEL",gameLevel);
+        return i;
+    }
 
 
 }

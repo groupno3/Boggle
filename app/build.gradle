@@ -5,7 +5,7 @@ android {
     buildToolsVersion '23.0.3'
 
     defaultConfig {
-        applicationId "com.projects.sweproject.boggle"
+        applicationId "com.pdx.groupno3.Boggle"
         minSdkVersion 18
         targetSdkVersion 23
         versionCode 1
@@ -24,4 +24,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'commons-io:commons-io:2.5'
+    compile 'com.google.firebase:firebase-database:10.2.0'
+
 }
+apply plugin: 'com.google.gms.google-services'
