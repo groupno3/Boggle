@@ -35,7 +35,7 @@ public class spNewGame extends AppCompatActivity {
     int viewHeight;
     int viewWidth;
     int offset;
-
+    AlertDialog.Builder alertDialog;
     static boolean active = false;
 
     private TextView scoreView;
@@ -220,7 +220,7 @@ public class spNewGame extends AppCompatActivity {
                 a.setText("Time's up!");
 
 
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
+                alertDialog = new AlertDialog.Builder(spNewGame.this);
                 alertDialog.setTitle("GAME OVER");
 
                 alertDialog.setPositiveButton("GO BACK", new DialogInterface.OnClickListener() {
