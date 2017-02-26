@@ -173,6 +173,7 @@ public class spNewGame extends AppCompatActivity {
                 String[] str = bc.getBoardLayout();
                 MultiPlayerBoard mpb = new MultiPlayerBoard(str);
 
+                //stores the current board to fire base
                 mDatabaseReference.child("Board").setValue(mpb);
 
 
