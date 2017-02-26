@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BoardCreator {
     String[] boardLayout;
-
+    ArrayList<String> allWordsInBoard;
     BoardCreator() {
         //real boggle dice possibilities
         String str0[] = {"r", "i", "f", "o", "b", "x"};
@@ -49,21 +49,28 @@ public class BoardCreator {
         boggleList.add(new BoggleDice(str14));
         boggleList.add(new BoggleDice(str15));
 
-        //shuffle the dice
-        Collections.shuffle(boggleList);
-
         //"roll" the dice and put the result into an array
         String output[] = new String[16];
         for(int i = 0; i < 16; i++) {
             output[i] = (boggleList.get(i)).rollDice();
         }
 
+        //shuffle the dice
+        Collections.shuffle(boggleList);
+
         this.boardLayout = output;
 
+        DFSearcher searcher = new DFSearcher(this.boardLayout);
+        this.allWordsInBoard = searcher.depthFirstSearch();
 
     }
 
     public String[] getBoardLayout() {
         return this.boardLayout;
     }
+
+    public ArrayList<String> getWords() {
+        return this.allWordsInBoard;
+    }
+
 }
