@@ -107,29 +107,34 @@ public class spNewGame extends AppCompatActivity {
 
                 String input = wordIn.getText().toString();
 
-                boolean isValidWord = dbHelper.getWord(input);
-
-                if (isValidWord == true) {
-
-                    if(selected_words.contains(letter_path)==false) {
-                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
-                        selected_words.add(letter_path);
-                        scoreView.setText("Your Score: " + calculateScore(input));
-                    }
-                    else{
-                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
-                    }
-
+                if(input.length()<3){
+                    Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
 
+
+                    boolean isValidWord = dbHelper.getWord(input);
+
+                    if (isValidWord == true) {
+
+                        if (selected_words.contains(letter_path) == false) {
+                            Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                            selected_words.add(letter_path);
+                            scoreView.setText("Your Score: " + calculateScore(input));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
+
+                    }
                 }
 
-                Toast.makeText(getApplicationContext(), letter_path, Toast.LENGTH_SHORT).show();
-                wordIn.setText("");
-                letter_path ="";
-                resetHighlight();
+                    wordIn.setText("");
+                    letter_path = "";
+                    resetHighlight();
+
 
             }
 
