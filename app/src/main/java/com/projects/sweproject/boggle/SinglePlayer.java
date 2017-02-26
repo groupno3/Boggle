@@ -30,7 +30,7 @@ public class SinglePlayer extends Activity {
             @Override
             public void onClick(View v) {
                 Level = "Easy";
-                Intent in = spNewGame.newIntent(SinglePlayer.this,Level);
+              Intent in = new Intent(getApplicationContext(), ShakeActivity.class);
                 startActivity(in);
             }
         });
@@ -39,7 +39,7 @@ public class SinglePlayer extends Activity {
             @Override
             public void onClick(View v) {
                 Level = "Medium";
-                Intent in = spNewGame.newIntent(SinglePlayer.this,Level);
+                Intent in = new Intent(getApplicationContext(), ShakeActivity.class);
                 startActivity(in);
             }
         });
@@ -47,8 +47,9 @@ public class SinglePlayer extends Activity {
         hard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Level = "Hard";
-                Intent in = spNewGame.newIntent(SinglePlayer.this,Level);
+               Intent in = new Intent(getApplicationContext(), ShakeActivity.class);
                 startActivity(in);
             }
         });

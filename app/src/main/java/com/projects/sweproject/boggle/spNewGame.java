@@ -37,7 +37,7 @@ public class spNewGame extends AppCompatActivity {
     int viewHeight;
     int viewWidth;
     int offset;
-
+    AlertDialog.Builder alertDialog;
     static boolean active = false;
 
     private TextView scoreView;
@@ -53,8 +53,10 @@ public class spNewGame extends AppCompatActivity {
     private TextView wordIn;
     private TextView timer;
     private String letter, word,letter_path="";
-    private ArrayList<String> selected_words;
+
+    private ArrayList<String>;
     // The following are used for the shake detection
+
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
@@ -63,6 +65,7 @@ public class spNewGame extends AppCompatActivity {
 
     private WordDBHelper dbHelper;
     SQLiteDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,23 +82,7 @@ public class spNewGame extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(), "Level: "+ Level, Toast.LENGTH_LONG).show();
         // ShakeDetector initialization
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAccelerometer = mSensorManager
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mShakeDetector = new ShakeDetector();
-        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
 
-            @Override
-            public void onShake(int count) {
-
-                finish();
-                startActivity(getIntent());
-
-            }
-
-
-
-        });
         scoreView = (TextView) findViewById(R.id.score_textView);
         scoreView.setText("Your Score: "+score);
 
@@ -160,6 +147,9 @@ public class spNewGame extends AppCompatActivity {
 
     private void startGame(){
         //clear
+
+        System.out.println("KADJKDJLAJDL") ;
+
         word = "";
         letter_path ="";
         wordIn.setText(word);
@@ -187,8 +177,13 @@ public class spNewGame extends AppCompatActivity {
         // TODO: create motion lock
         new CountDownTimer(180000, 1000) {
 
+
+
+
             public void onTick(long millisUntilFinished) {
-                timer.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
+
+            a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
+
             }
 
             public void onFinish() {
@@ -197,28 +192,19 @@ public class spNewGame extends AppCompatActivity {
                 timer.setText("Time's up!");
 
 
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
+                alertDialog = new AlertDialog.Builder(spNewGame.this);
                 alertDialog.setTitle("GAME OVER");
-                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
+
+                alertDialog.setPositiveButton("GO BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         //quit go back to Mainacitivyt
-                        Intent intent = new Intent(spNewGame.this, MainActivity.class);
+                        Intent intent = new Intent(spNewGame.this, SinglePlayer.class);
                         startActivity(intent);
 
                     }
                 });
-                alertDialog.setNegativeButton("PLAY AGAIN", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                        //restart the screen
-                        finish();
-                        startActivity(getIntent());
 
-
-
-                    }
-                });
                 alertDialog.create();
                 if(active)
                     alertDialog.show();
@@ -321,7 +307,6 @@ public class spNewGame extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         active = true;
-        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
