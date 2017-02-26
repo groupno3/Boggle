@@ -22,6 +22,7 @@
         <activity android:name=".SinglePlayer" />
         <activity android:name=".MultiPlayer" />
         <activity android:name=".spNewGame"/>
+        <activity android:name=".ShakeActivity"/>
 
     </application>
 

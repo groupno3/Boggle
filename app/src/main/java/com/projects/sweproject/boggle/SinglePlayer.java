@@ -45,7 +45,7 @@ public class SinglePlayer extends Activity {
         easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), spNewGame.class);
+                Intent in = new Intent(getApplicationContext(), ShakeActivity.class);
                 startActivity(in);
             }
         });

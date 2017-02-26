@@ -24,15 +24,6 @@ import java.util.ArrayList;
 
 public class spNewGame extends AppCompatActivity {
 
-
-    // The following are used for the shake detection
-    private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
-    private ShakeDetector mShakeDetector;
-
-
-
-
     int[][] matrix = {{R.id.Point00, R.id.Point01, R.id.Point02, R.id.Point03},
             {R.id.Point10, R.id.Point11, R.id.Point12, R.id.Point13},
             {R.id.Point20, R.id.Point21, R.id.Point22, R.id.Point23},
@@ -62,6 +53,10 @@ public class spNewGame extends AppCompatActivity {
     private TextView wordIn;
     private String letter, word,letter_path="";
     private ArrayList<String> selected_words = new ArrayList();
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,28 +64,6 @@ public class spNewGame extends AppCompatActivity {
         setContentView(R.layout.game_layout);
 
 
-        // ShakeDetector initialization
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAccelerometer = mSensorManager
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mShakeDetector = new ShakeDetector();
-        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-
-            @Override
-            public void onShake(int count) {
-				/*
-				 * The following method, "handleShakeEvent(count):" is a stub //
-				 * method you would use to setup whatever you want done once the
-				 * device has been shook.
-				 */
-                finish();
-                startActivity(getIntent());
-
-            }
-
-
-
-        });
 
 
 
@@ -210,6 +183,9 @@ public class spNewGame extends AppCompatActivity {
 
     private void startGame(){
         //clear
+
+        System.out.println("KADJKDJLAJDL") ;
+
         word = "";
         wordIn.setText(word);
         //gen board
@@ -231,8 +207,11 @@ public class spNewGame extends AppCompatActivity {
 
         new CountDownTimer(180000, 1000) {
 
+
+
+
             public void onTick(long millisUntilFinished) {
-                a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((millisUntilFinished/1000)%60));
+                a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
             }
 
             public void onFinish() {
@@ -243,26 +222,17 @@ public class spNewGame extends AppCompatActivity {
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(spNewGame.this);
                 alertDialog.setTitle("GAME OVER");
-                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
+
+                alertDialog.setPositiveButton("GO BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         //quit go back to Mainacitivyt
-                        Intent intent = new Intent(spNewGame.this, MainActivity.class);
+                        Intent intent = new Intent(spNewGame.this, SinglePlayer.class);
                         startActivity(intent);
 
                     }
                 });
-                alertDialog.setNegativeButton("PLAY AGAIN", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                        //restart the screen
-                        finish();
-                        startActivity(getIntent());
 
-
-
-                    }
-                });
                 alertDialog.create();
                 if(active)
                     alertDialog.show();
@@ -363,7 +333,6 @@ public class spNewGame extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         active = true;
-        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
@@ -399,12 +368,7 @@ public class spNewGame extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onPause() {
-        // Add the following line to unregister the Sensor Manager onPause
-        mSensorManager.unregisterListener(mShakeDetector);
-        super.onPause();
-    }
+
 
 
 
