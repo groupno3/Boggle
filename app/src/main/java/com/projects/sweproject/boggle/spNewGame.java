@@ -114,24 +114,23 @@ public class spNewGame extends AppCompatActivity {
                     if(selected_words.contains(letter_path)==false) {
                         Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
                         selected_words.add(letter_path);
-                        letter_path ="";
                         scoreView.setText("Your Score: " + calculateScore(input));
                     }
                     else{
                         Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
-                        letter_path ="";
                     }
 
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
-                    letter_path ="";
 
                 }
 
+                Toast.makeText(getApplicationContext(), letter_path, Toast.LENGTH_SHORT).show();
                 wordIn.setText("");
-
+                letter_path ="";
                 resetHighlight();
+
             }
 
 
@@ -141,6 +140,7 @@ public class spNewGame extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 wordIn.setText("");
+                letter_path ="";
                 resetHighlight();
             }
         });
@@ -208,6 +208,7 @@ public class spNewGame extends AppCompatActivity {
     private void startGame(){
         //clear
         word = "";
+        letter_path ="";
         wordIn.setText(word);
         selected_words = new ArrayList<String>();
         bc = new BoardCreator();
