@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
@@ -54,12 +52,8 @@ public class spNewGame extends AppCompatActivity {
     private TextView timer;
     private String letter, word,letter_path="";
 
-    private ArrayList<String>;
+    private ArrayList<String> selected_words;
     // The following are used for the shake detection
-
-    private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
-    private ShakeDetector mShakeDetector;
 
     private DatabaseReference mDatabaseReference;
 
@@ -148,8 +142,6 @@ public class spNewGame extends AppCompatActivity {
     private void startGame(){
         //clear
 
-        System.out.println("KADJKDJLAJDL") ;
-
         word = "";
         letter_path ="";
         wordIn.setText(word);
@@ -182,7 +174,7 @@ public class spNewGame extends AppCompatActivity {
 
             public void onTick(long millisUntilFinished) {
 
-            a.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
+            timer.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
 
             }
 
@@ -379,14 +371,6 @@ public class spNewGame extends AppCompatActivity {
         wordIn.setText("");
         letter_path ="";
         resetHighlight();
-    }
-
-
-    @Override
-    public void onPause() {
-        // Add the following line to unregister the Sensor Manager onPause
-        mSensorManager.unregisterListener(mShakeDetector);
-        super.onPause();
     }
 
     public static Intent newIntent(Context packageContext, String gameLevel) {
