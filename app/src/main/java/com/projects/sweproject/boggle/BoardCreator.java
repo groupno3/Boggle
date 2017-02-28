@@ -2,7 +2,9 @@ package com.projects.sweproject.boggle;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by rPhilip on 2/12/17.
@@ -11,7 +13,16 @@ import java.util.List;
 public class BoardCreator {
     String[] boardLayout;
     ArrayList<String> allWordsInBoard;
-    BoardCreator() {
+    BoardCreator(WordDBHelper dbHelper, String level) {
+        int requiredWordCount;
+        if (level.equals("Easy")) {
+            requiredWordCount = 2;
+        } else if (level.equals("Medium")) {
+            requiredWordCount = 5;
+        } else {
+            requiredWordCount = 7;
+        }
+
         //real boggle dice possibilities
         String str0[] = {"r", "i", "f", "o", "b", "x"};
         String str1[] = {"i", "f", "e", "h", "e", "y"};
@@ -49,19 +60,21 @@ public class BoardCreator {
         boggleList.add(new BoggleDice(str14));
         boggleList.add(new BoggleDice(str15));
 
-        //"roll" the dice and put the result into an array
-        String output[] = new String[16];
-        for(int i = 0; i < 16; i++) {
-            output[i] = (boggleList.get(i)).rollDice();
-        }
+        do {
+            //"roll" the dice and put the result into an array
+            String output[] = new String[16];
+            for (int i = 0; i < 16; i++) {
+                output[i] = (boggleList.get(i)).rollDice();
+            }
 
-        //shuffle the dice
-        Collections.shuffle(boggleList);
+            //shuffle the dice
+            Collections.shuffle(boggleList);
 
-        this.boardLayout = output;
+            this.boardLayout = output;
 
-        DFSearcher searcher = new DFSearcher(this.boardLayout);
-        this.allWordsInBoard = searcher.depthFirstSearch();
+            DFSearcher searcher = new DFSearcher(this.boardLayout, dbHelper);
+            this.allWordsInBoard = searcher.depthFirstSearch();
+        } while (allWordsInBoard.size() < requiredWordCount);
 
     }
 
@@ -71,6 +84,17 @@ public class BoardCreator {
 
     public ArrayList<String> getWords() {
         return this.allWordsInBoard;
+    }
+
+    public String getAllWordsInString() {
+        Set<String> uniqueWords = new LinkedHashSet<>(allWordsInBoard);
+        String returnStr = "";
+
+        for(String word : uniqueWords) {
+            returnStr += word + " ";
+        }
+
+        return returnStr;
     }
 
 }

@@ -37,11 +37,12 @@ public class DFSearcher {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0}
     };
 
-    public DFSearcher(String[] str) {
+    public DFSearcher(String[] str, WordDBHelper dbHelper) {
         int len = str.length;
         for (int i = 0; i < len; i++) {
             nodeList.add(new Node(str[i], i));
         }
+        this.dbHelper = dbHelper;
     }
 
     public ArrayList<String> depthFirstSearch() {
@@ -98,39 +99,11 @@ public class DFSearcher {
     }
 
     public boolean isWord(String str) {
-        BufferedReader br = null;
-        FileReader fr = null;
-        try {
-            fr = new FileReader("words.txt");
-            br = new BufferedReader(fr);
-            String currLine;
-            while((currLine = br.readLine()) != null) {
-                if (currLine.equals(str)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return dbHelper.getWord(str);
     }
 
     public boolean isPrefixToWord(String str) {
-        BufferedReader br = null;
-        FileReader fr = null;
-        try {
-            fr = new FileReader("words.txt");
-            br = new BufferedReader(fr);
-            String currLine;
-            while((currLine = br.readLine()) != null) {
-                if (currLine.substring(0, Math.min(currLine.length(), str.length())).equals(str)) {
-                    return true;
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return dbHelper.getWord(str);
     }
+
 }

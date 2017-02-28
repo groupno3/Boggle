@@ -45,6 +45,7 @@ public class spNewGame extends AppCompatActivity {
 
     BoardCreator bc;
     String [][] board;
+    String level;
 
     private LinearLayout main;
     private SquareTextView sq;
@@ -69,6 +70,7 @@ public class spNewGame extends AppCompatActivity {
         //get selected level
         Bundle extras = getIntent().getExtras();
         String Level = extras.getString("LEVEL");
+        this.level = Level;
 
         dbHelper = new WordDBHelper(getApplicationContext());
         db = dbHelper.getWritableDatabase();
@@ -146,7 +148,9 @@ public class spNewGame extends AppCompatActivity {
         letter_path ="";
         wordIn.setText(word);
         selected_words = new ArrayList<String>();
-        bc = new BoardCreator();
+        bc = new BoardCreator(dbHelper, level);
+
+
         //gen board
         for(int i=0;i<4;++i) {
             for (int j = 0; j < 4; ++j) {
@@ -185,7 +189,8 @@ public class spNewGame extends AppCompatActivity {
 
 
                 alertDialog = new AlertDialog.Builder(spNewGame.this);
-                alertDialog.setTitle("GAME OVER");
+                alertDialog.setTitle("GAME OVER! All words in the game are: " + bc.getAllWordsInString());
+
 
                 alertDialog.setPositiveButton("GO BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
