@@ -79,6 +79,29 @@ public class WordDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean getPrefixWord(String userInput){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(WordReaderContract.WordEntry.TABLE_NAME,
+                new String[] {"word"},
+                "word LIKE ?",
+                new String[] {userInput + "%"},
+                null,
+                null,
+                null,
+                null);
+
+        if (cursor.getCount() > 0){
+            cursor.close();
+            return true;
+
+        }
+        else{
+            cursor.close();
+            return false;
+        }
+    }
+
 
 
 }
