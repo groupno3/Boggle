@@ -11,8 +11,8 @@ public class HighScoreReaderContract {
 
     public static class HighScoreEntry implements BaseColumns {
         public static final String TABLE_NAME = "highscore";
-        public static final String COLUMN_NAME = "playername";
-
-
+        public static final String COLUMN_NAME_PLAYER = "playername";
+        public static final String COLUMN_NAME_SCORE = "score";
+        public static final String COLUMN_NAME_LEVEL = "level";
     }
 }
