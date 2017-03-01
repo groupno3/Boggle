@@ -11,7 +11,6 @@ import android.widget.ImageButton;
  */
 public class MultiPlayer extends Activity {
 
-    String Level;
     ImageButton host;
     @Override
     protected void onCreate(Bundle savedInstanceState){
