@@ -8,13 +8,26 @@ import java.util.ArrayList;
 
 public class MultiPlayerBoard {
 
-    ArrayList<String> BoardList = new ArrayList();
+    ArrayList<String> BoardList;
+    ArrayList<String> Player1WordList;
+    ArrayList<String> Player2WordList;
+    String PassCode;
+
+
+
+
 
     public MultiPlayerBoard (String[] Board){
+        BoardList = new ArrayList();
+        Player1WordList = new ArrayList();
+        Player2WordList = new ArrayList();
 
         for (int i =0; i<Board.length; i++){
             this.BoardList.add(Board[i]);
         }
+
+        PassCode = String.valueOf((int)(Math.random()*10))+String.valueOf((int)(Math.random()*10))+String.valueOf((int)(Math.random()*10))
+                +String.valueOf(((int)Math.random()*10));
     }
 }
 
