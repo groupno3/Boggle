@@ -50,6 +50,7 @@ public class WordDBHelper extends SQLiteOpenHelper {
             db.execSQL(query);
         }
 
+        db.execSQL("CREATE INDEX wordIndex ON wordtable (word);");
         Log.d("onCreate", "onCreate");
 
     }
