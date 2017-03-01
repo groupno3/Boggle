@@ -262,29 +262,56 @@ public class spNewGame extends AppCompatActivity {
         //resetHighlight();
     }
 
+    public boolean dispatchTouchEvent(MotionEvent event){
+        int X = (int) event.getX();
+        int Y = (int) event.getY();
+        int EA = event.getAction();
+
+        switch (EA){
+            case MotionEvent.ACTION_DOWN:
+                Log.d("*** DispatchTouch :: ","Action Down X:"+X+" Y:"+Y);
+                track(X, Y);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.d("*** DispatchTouch :: ","Action Move X:"+X+" Y:"+Y);
+                track(X, Y);
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.d("*** DispatchTouch :: ","Action up X:"+X+" Y:"+Y);
+                submit();
+                break;
+        }
+
+        return super.dispatchTouchEvent(event);
+    }
+
+    /*
     public boolean onTouchEvent(MotionEvent event) {
 
         int X = (int) event.getX();
         int Y = (int) event.getY();
         int EA = event.getAction();
-        //Log.d("*** MotionEvent :: "," Event: "+EA);
+
         switch (EA) {
             case MotionEvent.ACTION_DOWN:
+                Log.d("*** onTouchEvent :: "," Event: Action Down");
                 track(X, Y);
                 break;
 
             case MotionEvent.ACTION_MOVE:
+                Log.d("*** onTouchEvent :: "," Event: Action Move");
                 track(X, Y);
                 break;
 
             case MotionEvent.ACTION_UP:
+                Log.d("*** onTouchEvent :: "," Event: Action up");
                 submit();
                 break;
         }
 
         return true;
     }
-
+    */
 
     @Override
     public void onResume() {
