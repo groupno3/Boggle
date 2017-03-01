@@ -48,6 +48,8 @@ public class ShakeActivity extends Activity {
                 finish();
                 startActivity(getIntent());
         */
+
+                System.out.println("SHAKE count " + count);
                 Intent in = spNewGame.newIntent(ShakeActivity.this,Level);
                 startActivity(in);
 
