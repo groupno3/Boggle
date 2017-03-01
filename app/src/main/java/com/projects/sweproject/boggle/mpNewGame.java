@@ -17,9 +17,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
-public class spNewGame extends AppCompatActivity {
+public class mpNewGame extends AppCompatActivity {
 
     int[][] matrix = {{R.id.Point00, R.id.Point01, R.id.Point02, R.id.Point03},
             {R.id.Point10, R.id.Point11, R.id.Point12, R.id.Point13},
@@ -53,6 +56,8 @@ public class spNewGame extends AppCompatActivity {
     private ArrayList<String> selected_words;
     // The following are used for the shake detection
 
+    private DatabaseReference mDatabaseReference;
+
     private WordDBHelper dbHelper;
     SQLiteDatabase db;
 
@@ -69,6 +74,7 @@ public class spNewGame extends AppCompatActivity {
 
         dbHelper = new WordDBHelper(getApplicationContext());
         db = dbHelper.getWritableDatabase();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         Toast.makeText(getApplicationContext(), "Level: "+ Level, Toast.LENGTH_LONG).show();
         // ShakeDetector initialization
@@ -151,8 +157,16 @@ public class spNewGame extends AppCompatActivity {
                 sq = (SquareTextView) findViewById(matrix[i][j]);
                 touchPath[i][j] = 0;
                 String[] str = bc.getBoardLayout();
+                MultiPlayerBoard mpb = new MultiPlayerBoard(str);
+
+                //stores the current board to fire base
+                mDatabaseReference.child("Board").setValue(mpb);
+
+
                 board[i][j] = str[i*4+j];
+
                 sq.setText(board[i][j], TextView.BufferType.EDITABLE);
+
             }
         }
         //start timer
@@ -174,7 +188,7 @@ public class spNewGame extends AppCompatActivity {
                 timer.setText("Time's up!");
 
 
-                alertDialog = new AlertDialog.Builder(spNewGame.this);
+                alertDialog = new AlertDialog.Builder(mpNewGame.this);
                 alertDialog.setTitle("GAME OVER! All words in the game are: " + bc.getAllWordsInString());
 
 
@@ -182,7 +196,7 @@ public class spNewGame extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         //quit go back to Mainacitivyt
-                        Intent intent = new Intent(spNewGame.this, SinglePlayer.class);
+                        Intent intent = new Intent(mpNewGame.this, SinglePlayer.class);
                         startActivity(intent);
 
                     }
@@ -365,7 +379,7 @@ public class spNewGame extends AppCompatActivity {
     }
 
     public static Intent newIntent(Context packageContext, String gameLevel) {
-        Intent i = new Intent( packageContext, spNewGame.class);
+        Intent i = new Intent( packageContext, mpNewGame.class);
         i.putExtra("LEVEL",gameLevel);
         return i;
     }
