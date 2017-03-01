@@ -23,7 +23,7 @@
         <activity android:name=".MultiPlayer" />
         <activity android:name=".spNewGame"/>
         <activity android:name=".ShakeActivity"/>
-
+        <activity android:name=".JoinActivity"/>
     </application>
 
 </manifest>

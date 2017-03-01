@@ -2,6 +2,7 @@ package com.projects.sweproject.boggle;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 public class MultiPlayer extends Activity {
 
     ImageButton host;
+    ImageButton join;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -25,6 +27,19 @@ public class MultiPlayer extends Activity {
                 startActivity(in);
             }
         });
+
+        join = (ImageButton)findViewById(R.id.joinbtn);
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(MultiPlayer.this, JoinActivity.class);
+                startActivity(in);
+
+            }
+        });
+
+
+
 
     }
 
