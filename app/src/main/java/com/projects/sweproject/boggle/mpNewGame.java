@@ -206,11 +206,11 @@ public class mpNewGame extends AppCompatActivity {
                 timer.setText("Time's up!");
 
 
-                alertDialog = new AlertDialog.Builder(mpNewGame.this);
-                alertDialog.setTitle("GAME OVER! All words in the game are: " + bc.getAllWordsInString());
+                alertDialog = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
+                alertDialog.setTitle("GAME OVER!");
+                alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
 
-
-                alertDialog.setPositiveButton("GO BACK", new DialogInterface.OnClickListener() {
+                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         //quit go back to Mainacitivyt
@@ -230,22 +230,22 @@ public class mpNewGame extends AppCompatActivity {
 
     }
 
-    private void track(int x, int y){
+    private void track(int x, int y) {
         int pointX;
         int pointY;
         //letter_path = "";
         //wordIn.setText("");
         //wordIn.append("X:"+x+" Y:"+y+"\n");
         //wordIn.append("GX:"+gridX+"GY: "+gridY+" OS:"+offset+" VW:"+viewWidth+"\n");
-        for(int i = 0; i < 4; ++i){
-            for(int j = 0; j < 4; ++j){
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
                 //wordIn.append("|"+lMatrix[i][j].x+","+lMatrix[i][j].y+"|");
                 pointX = lMatrix[i][j].x + gridX;
                 pointY = lMatrix[i][j].y + gridY;
 
-                if(x > pointX + offset && x < pointX + viewWidth - offset){
-                    if(y > pointY + offset && y < pointY + viewHeight - offset){
-                        if(touchPath[i][j] == 0){
+                if (x > pointX + offset && x < pointX + viewWidth - offset) {
+                    if (y > pointY + offset && y < pointY + viewHeight - offset) {
+                        if (touchPath[i][j] == 0) {
 
                             sq = (SquareTextView) findViewById(matrix[i][j]);
                             letter = sq.getText().toString();
@@ -254,7 +254,7 @@ public class mpNewGame extends AppCompatActivity {
                             sq.setBackgroundColor(Color.RED);
 
                             word = word + letter;
-                            letter_path = letter_path + i+j;
+                            letter_path = letter_path + i + j;
                             wordIn.setText(word);
                             //wordIn.setGravity(Gravity.LEFT);
 
@@ -294,27 +294,27 @@ public class mpNewGame extends AppCompatActivity {
         //resetHighlight();
     }
 
-    public boolean onTouchEvent(MotionEvent event) {
-
+    public boolean dispatchTouchEvent(MotionEvent event){
         int X = (int) event.getX();
         int Y = (int) event.getY();
         int EA = event.getAction();
-        //Log.d("*** MotionEvent :: "," Event: "+EA);
-        switch (EA) {
+
+        switch (EA){
             case MotionEvent.ACTION_DOWN:
+                Log.d("*** DispatchTouch :: ","Action Down X:"+X+" Y:"+Y);
                 track(X, Y);
                 break;
-
             case MotionEvent.ACTION_MOVE:
+                Log.d("*** DispatchTouch :: ","Action Move X:"+X+" Y:"+Y);
                 track(X, Y);
                 break;
-
             case MotionEvent.ACTION_UP:
+                Log.d("*** DispatchTouch :: ","Action up X:"+X+" Y:"+Y);
                 submit();
                 break;
         }
 
-        return true;
+        return super.dispatchTouchEvent(event);
     }
 
 
