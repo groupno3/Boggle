@@ -182,7 +182,7 @@ public class spNewGame extends AppCompatActivity {
                 //if player has high score show game over, otherwise not show it
 
 
-                System.out.println("Does this player has high score? " + scoreDBHelper.isHighScore(score, level));
+
 
                 if(scoreDBHelper.isHighScore(score, level)) {
                     alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
@@ -201,6 +201,9 @@ public class spNewGame extends AppCompatActivity {
                             vals.put(HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_SCORE, score);
                             vals.put(HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_LEVEL, level);
                             scoreDB.insert(HighScoreReaderContract.HighScoreEntry.TABLE_NAME, null, vals);
+                            Intent intent = new Intent(spNewGame.this, MainActivity.class);
+                            startActivity(intent);
+
                         }
                     });
 

@@ -18,4 +18,73 @@ public class HighScoreKeeper {
     public HighScoreKeeper() {
 
     }
+
+
+    public String displayEasyNames() {
+
+
+        String players = "";
+        for (String elem : easyNames) {
+            players += elem + '\n';
+
+        }
+
+        return players;
+
+    }
+
+
+    public String displayEasyScores(){
+        String scores = "";
+        for (String elem : easyScores) {
+            scores += elem + '\n';
+
+        }
+
+        return scores;
+
+    }
+
+    public String displayMediumNames() {
+
+
+        String players = "";
+        for (String elem : mediumNames) {
+            players += elem + '\n';
+
+        }
+
+        return players;
+
+    }
+
+
+    public String displayMediumScores(){
+        String scores = "";
+        for (String elem : mediumScores) {
+            scores += elem + '\n';
+        }
+
+        return scores;
+
+    }
+    public String displayHardNames() {
+        String players = "";
+        for (String elem : hardNames) {
+            players += elem + '\n';
+
+        }
+        return players;
+    }
+
+    public String displayHardScores(){
+        String scores = "";
+        for (String elem : hardScores) {
+            scores += elem + '\n';
+
+        }
+
+        return scores;
+
+    }
 }
