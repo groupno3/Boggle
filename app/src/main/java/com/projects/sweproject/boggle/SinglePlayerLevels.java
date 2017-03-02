@@ -10,12 +10,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
-public class SinglePlayer extends Activity {
+public class SinglePlayerLevels extends Activity {
 
     ImageButton easy;
     ImageButton medium;
     ImageButton hard;
     String Level;
+    String Mode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +30,9 @@ public class SinglePlayer extends Activity {
         easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Mode = "SinglePlayer";
                 Level = "Easy";
-                Intent in = ShakeActivity.newIntent(SinglePlayer.this, Level);
+                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, Mode, Level, null);
                 startActivity(in);
             }
         });
@@ -38,8 +40,9 @@ public class SinglePlayer extends Activity {
         medium.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Mode = "SinglePlayer";
                 Level = "Medium";
-                Intent in = ShakeActivity.newIntent(SinglePlayer.this, Level);
+                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, Mode, Level,null);
                 startActivity(in);
             }
         });
@@ -47,9 +50,9 @@ public class SinglePlayer extends Activity {
         hard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Mode = "SinglePlayer";
                 Level = "Hard";
-                Intent in = ShakeActivity.newIntent(SinglePlayer.this, Level);
+                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, Mode, Level,null);
                 startActivity(in);
             }
         });

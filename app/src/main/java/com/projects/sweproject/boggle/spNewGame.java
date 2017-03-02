@@ -182,7 +182,7 @@ public class spNewGame extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         //quit go back to Mainacitivyt
-                        Intent intent = new Intent(spNewGame.this, SinglePlayer.class);
+                        Intent intent = new Intent(spNewGame.this, SinglePlayerLevels.class);
                         startActivity(intent);
 
                     }
