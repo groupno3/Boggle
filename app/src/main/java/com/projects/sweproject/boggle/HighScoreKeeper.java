@@ -1,5 +1,6 @@
 package com.projects.sweproject.boggle;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -7,9 +8,12 @@ import java.util.HashMap;
  */
 
 public class HighScoreKeeper {
-    public HashMap<String, Integer> easyMap = new HashMap<>();
-    public HashMap<String, Integer> mediumMap = new HashMap<>();
-    public HashMap<String, Integer> hardMap = new HashMap<>();
+    public ArrayList<String> easyNames = new ArrayList<>();
+    public ArrayList<String> easyScores = new ArrayList<>();
+    public ArrayList<String> mediumNames = new ArrayList<>();
+    public ArrayList<String> mediumScores = new ArrayList<>();
+    public ArrayList<String> hardNames = new ArrayList<>();
+    public ArrayList<String> hardScores = new ArrayList<>();
 
     public HighScoreKeeper() {
 
