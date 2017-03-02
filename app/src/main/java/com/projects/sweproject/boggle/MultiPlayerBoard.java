@@ -14,17 +14,19 @@ public class MultiPlayerBoard {
     String PassCode;
     boolean GameStarted;
     boolean Player2Joined;
+    String AllWords;
 
 
 
     public MultiPlayerBoard(){}
 
-    public MultiPlayerBoard (String[] Board){
+    public MultiPlayerBoard (String[] Board, String allWords){
         BoardList = new ArrayList();
         Player1WordList = new ArrayList();
         Player2WordList = new ArrayList();
         GameStarted = false;
         Player2Joined = false;
+        AllWords = allWords;
 
         for (int i =0; i<Board.length; i++){
             this.BoardList.add(Board[i]);

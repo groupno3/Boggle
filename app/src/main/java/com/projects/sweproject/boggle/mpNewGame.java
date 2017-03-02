@@ -1,5 +1,6 @@
 package com.projects.sweproject.boggle;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,6 +58,8 @@ public class mpNewGame extends AppCompatActivity {
     private TextView wordIn;
     private TextView timer;
     private String letter, word,letter_path="";
+    private Boolean isPlayer2In = false;
+    private String AllWords ="";
 
     private ArrayList<String> selected_words;
     // The following are used for the shake detection
@@ -65,6 +68,8 @@ public class mpNewGame extends AppCompatActivity {
 
     private WordDBHelper dbHelper;
     SQLiteDatabase db;
+
+    private ProgressDialog mProgressDialog;
 
 
     @Override
@@ -78,9 +83,13 @@ public class mpNewGame extends AppCompatActivity {
         PlayerType = extras.getString("TYPE");
         this.level = Level;
 
+        alertDialog = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
+        alertDialog.setTitle("GAME OVER!");
+
         dbHelper = new WordDBHelper(getApplicationContext());
         db = dbHelper.getWritableDatabase();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
 
         // ShakeDetector initialization
 
@@ -153,6 +162,8 @@ public class mpNewGame extends AppCompatActivity {
         letter_path ="";
         wordIn.setText(word);
         selected_words = new ArrayList<String>();
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("Waiting for Player 2 to join...");
 
         //gen board
         if(PlayerType.equals("HOST")) {
@@ -160,10 +171,42 @@ public class mpNewGame extends AppCompatActivity {
             bc = new BoardCreator(dbHelper, level);
             String[] str = bc.getBoardLayout();
             generateBoard(str);
-            MultiPlayerBoard mpb = new MultiPlayerBoard(str);
+            MultiPlayerBoard mpb = new MultiPlayerBoard(str, bc.getAllWordsInString());
             mDatabaseReference.child("Board").setValue(mpb);
             //Toast.makeText(getApplicationContext(), " Pass Code for Player 2: " + mpb.PassCode, Toast.LENGTH_LONG).show();
-            showDialog(" Pass Code for Player 2: " + mpb.PassCode);
+
+            alertDialog = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
+            alertDialog.setTitle("Pass code");
+            alertDialog.setMessage("Pass Code for Player 2: " + mpb.PassCode);
+
+            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    mProgressDialog.show();
+
+                    mDatabaseReference.child("Board").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            MultiPlayerBoard MPB = dataSnapshot.getValue(MultiPlayerBoard.class);
+                            isPlayer2In=MPB.Player2Joined;
+                            if(isPlayer2In){
+                                mProgressDialog.dismiss();
+                                startTimer();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+            });
+
+            alertDialog.create().show();
+
+            //mProgressDialog.dismiss();
         }
         else if(PlayerType.equals("JOIN")) {
 
@@ -176,7 +219,9 @@ public class mpNewGame extends AppCompatActivity {
                     MultiPlayerBoard MPB = dataSnapshot.child("Board").getValue(MultiPlayerBoard.class);
                     String[] str = new String[MPB.BoardList.size()];
                     str =  MPB.BoardList.toArray(str);
+                    AllWords = MPB.AllWords;
                     generateBoard(str);
+                    startTimer();
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -187,45 +232,7 @@ public class mpNewGame extends AppCompatActivity {
             mDatabaseReference.addValueEventListener(postListner);
         }
 
-            //start timer
-        // TODO: create motion lock
-        new CountDownTimer(180000, 1000) {
 
-
-
-
-            public void onTick(long millisUntilFinished) {
-
-            timer.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
-
-            }
-
-            public void onFinish() {
-
-
-                timer.setText("Time's up!");
-
-
-                alertDialog = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
-                alertDialog.setTitle("GAME OVER!");
-                alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
-
-                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK button
-                        //quit go back to Mainacitivyt
-                        Intent intent = new Intent(mpNewGame.this, SinglePlayerLevels.class);
-                        startActivity(intent);
-
-                    }
-                });
-
-                alertDialog.create();
-                if(active)
-                    alertDialog.show();
-
-            }
-        }.start();
 
 
     }
@@ -421,6 +428,49 @@ public class mpNewGame extends AppCompatActivity {
         alertDialog.setTitle(TextToShow);
         alertDialog.create();
         alertDialog.show();
+    }
+
+    public void startTimer(){
+
+        //start timer
+        // TODO: create motion lock
+        new CountDownTimer(120000, 1000) {
+
+
+
+
+            public void onTick(long millisUntilFinished) {
+
+                timer.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
+
+            }
+
+            public void onFinish() {
+
+
+                timer.setText("Time's up!");
+
+                if(PlayerType.equals("HOST"))
+                    alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
+                else if(PlayerType.equals("JOIN"))
+                    alertDialog.setMessage("The valid words in this board are:\n\n" + AllWords);
+
+                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        //quit go back to Mainacitivyt
+                        Intent intent = new Intent(mpNewGame.this, SinglePlayerLevels.class);
+                        startActivity(intent);
+
+                    }
+                });
+
+                alertDialog.create();
+                if(active)
+                    alertDialog.show();
+
+            }
+        }.start();
     }
 
 
