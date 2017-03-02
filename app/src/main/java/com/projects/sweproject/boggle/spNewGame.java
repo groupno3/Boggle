@@ -14,7 +14,9 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,9 +60,8 @@ public class spNewGame extends AppCompatActivity {
     private WordDBHelper dbHelper;
     SQLiteDatabase db;
 
-    private HighScoreDBHelper scoreDBHelper;
-
-
+    HighScoreDBHelper scoreDBHelper;
+    SQLiteDatabase scoreDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +72,9 @@ public class spNewGame extends AppCompatActivity {
         String Level = extras.getString("LEVEL");
         this.level = Level;
 
+
+        scoreDBHelper = new HighScoreDBHelper(getApplicationContext());
+        scoreDB = scoreDBHelper.getWritableDatabase();
         dbHelper = new WordDBHelper(getApplicationContext());
         db = dbHelper.getWritableDatabase();
 
@@ -176,7 +180,32 @@ public class spNewGame extends AppCompatActivity {
 
 
                 alertDialog = new AlertDialog.Builder(spNewGame.this, R.style.MyAlertDialogStyle);
-                alertDialog.setTitle("GAME OVER!");
+                //if player has high score show game over, otherwise not show it
+
+
+                System.out.println("Does this player has high score? " + scoreDBHelper.isHighScore(score, level));
+
+                if(scoreDBHelper.isHighScore(score, level)) {
+                    alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
+                    final EditText highScoreName = new EditText(spNewGame.this);
+                    highScoreName.setHint("Please enter your name:");
+                    alertDialog.setView(highScoreName);
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User clicked OK button
+                            //quit go back to Mainacitivyt
+
+                        }
+                    });
+
+
+                }
+                else
+                    alertDialog.setTitle("GAME OVER!");
+
+
                 alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
 
                 alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
@@ -188,7 +217,7 @@ public class spNewGame extends AppCompatActivity {
 
                     }
                 });
-
+                alertDialog.setCancelable(false);
                 alertDialog.create();
                 if (active) {
                     alertDialog.show();
