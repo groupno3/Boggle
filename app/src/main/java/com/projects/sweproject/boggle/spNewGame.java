@@ -11,8 +11,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +30,7 @@ public class spNewGame extends AppCompatActivity {
 
     Point[][] lMatrix;
     int[][] touchPath;
-    int gridX,gridY;
+    int gridX, gridY;
     int viewHeight;
     int viewWidth;
     int offset;
@@ -41,14 +43,14 @@ public class spNewGame extends AppCompatActivity {
     int word_count = 0;
 
     BoardCreator bc;
-    String [][] board;
+    String[][] board;
     String level;
 
     private LinearLayout main;
     private SquareTextView sq;
     private TextView wordIn;
     private TextView timer;
-    private String letter, word,letter_path="";
+    private String letter, word, letter_path = "";
 
     private ArrayList<String> selected_words;
     // The following are used for the shake detection
@@ -70,11 +72,11 @@ public class spNewGame extends AppCompatActivity {
         dbHelper = new WordDBHelper(getApplicationContext());
         db = dbHelper.getWritableDatabase();
 
-        Toast.makeText(getApplicationContext(), "Level: "+ Level, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Level: " + Level, Toast.LENGTH_LONG).show();
         // ShakeDetector initialization
 
         scoreView = (TextView) findViewById(R.id.score_textView);
-        scoreView.setText("Your Score: "+score);
+        scoreView.setText("Your Score: " + score);
 
         //init
         board = new String[4][4];
@@ -82,7 +84,7 @@ public class spNewGame extends AppCompatActivity {
         touchPath = new int[4][4];
         viewHeight = 0;
         viewWidth = 0;
-        wordIn = (TextView)findViewById(R.id.WordInput);
+        wordIn = (TextView) findViewById(R.id.WordInput);
         timer = (TextView) findViewById(R.id.timer);
 
         //Touch grid
@@ -91,7 +93,7 @@ public class spNewGame extends AppCompatActivity {
             @Override
             public void run() {
                 SquareLayout box = (SquareLayout) findViewById(R.id.SquareLayout);
-                gridX = (int)box.getX();
+                gridX = (int) box.getX();
 
                 sq = (SquareTextView) findViewById(matrix[0][0]);
                 viewWidth = sq.getWidth();
@@ -101,9 +103,9 @@ public class spNewGame extends AppCompatActivity {
 
                 int x;
                 int y = 0;
-                for(int i = 0; i < 4; ++i){
+                for (int i = 0; i < 4; ++i) {
                     x = 0;
-                    for(int j = 0; j < 4; ++j){
+                    for (int j = 0; j < 4; ++j) {
                         lMatrix[i][j] = new Point(x, y);
                         x = x + viewWidth;
                     }
@@ -114,13 +116,12 @@ public class spNewGame extends AppCompatActivity {
 
 
         TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-        {
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
             gridY =
-                    TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+                    TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
         }
         gridY += getStatusBarHeight();
-        Log.i("*** TAG :: ","gridY = "+ gridY);
+        Log.i("*** TAG :: ", "gridY = " + gridY);
         //start
         startGame();
     }
@@ -135,36 +136,34 @@ public class spNewGame extends AppCompatActivity {
         return result;
     }
 
-    private void startGame(){
+    private void startGame() {
         //clear
 
         word = "";
-        letter_path ="";
+        letter_path = "";
         wordIn.setText(word);
         selected_words = new ArrayList<String>();
         bc = new BoardCreator(dbHelper, level);
 
 
         //gen board
-        for(int i=0;i<4;++i) {
+        for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
                 sq = (SquareTextView) findViewById(matrix[i][j]);
                 touchPath[i][j] = 0;
                 String[] str = bc.getBoardLayout();
-                board[i][j] = str[i*4+j];
+                board[i][j] = str[i * 4 + j];
                 sq.setText(board[i][j], TextView.BufferType.EDITABLE);
             }
         }
         //start timer
         // TODO: create motion lock
-        new CountDownTimer(180000, 1000) {
-
-
+        new CountDownTimer(5000, 1000) {
 
 
             public void onTick(long millisUntilFinished) {
 
-            timer.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
+                timer.setText("Time left: " + ((millisUntilFinished / 1000) / 60) + ":" + ((String.format("%02d", (millisUntilFinished / 1000) % 60))));
 
             }
 
@@ -174,11 +173,11 @@ public class spNewGame extends AppCompatActivity {
                 timer.setText("Time's up!");
 
 
-                alertDialog = new AlertDialog.Builder(spNewGame.this);
-                alertDialog.setTitle("GAME OVER! All words in the game are: " + bc.getAllWordsInString());
+                alertDialog = new AlertDialog.Builder(spNewGame.this, R.style.MyAlertDialogStyle);
+                alertDialog.setTitle("GAME OVER!");
+                alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
 
-
-                alertDialog.setPositiveButton("GO BACK", new DialogInterface.OnClickListener() {
+                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         //quit go back to Mainacitivyt
@@ -189,8 +188,10 @@ public class spNewGame extends AppCompatActivity {
                 });
 
                 alertDialog.create();
-                if(active)
+                if (active) {
                     alertDialog.show();
+                }
+
 
             }
         }.start();
@@ -198,22 +199,22 @@ public class spNewGame extends AppCompatActivity {
 
     }
 
-    private void track(int x, int y){
+    private void track(int x, int y) {
         int pointX;
         int pointY;
         //letter_path = "";
         //wordIn.setText("");
         //wordIn.append("X:"+x+" Y:"+y+"\n");
         //wordIn.append("GX:"+gridX+"GY: "+gridY+" OS:"+offset+" VW:"+viewWidth+"\n");
-        for(int i = 0; i < 4; ++i){
-            for(int j = 0; j < 4; ++j){
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
                 //wordIn.append("|"+lMatrix[i][j].x+","+lMatrix[i][j].y+"|");
                 pointX = lMatrix[i][j].x + gridX;
                 pointY = lMatrix[i][j].y + gridY;
 
-                if(x > pointX + offset && x < pointX + viewWidth - offset){
-                    if(y > pointY + offset && y < pointY + viewHeight - offset){
-                        if(touchPath[i][j] == 0){
+                if (x > pointX + offset && x < pointX + viewWidth - offset) {
+                    if (y > pointY + offset && y < pointY + viewHeight - offset) {
+                        if (touchPath[i][j] == 0) {
 
                             sq = (SquareTextView) findViewById(matrix[i][j]);
                             letter = sq.getText().toString();
@@ -222,7 +223,7 @@ public class spNewGame extends AppCompatActivity {
                             sq.setBackgroundColor(Color.RED);
 
                             word = word + letter;
-                            letter_path = letter_path + i+j;
+                            letter_path = letter_path + i + j;
                             wordIn.setText(word);
                             //wordIn.setGravity(Gravity.LEFT);
 
@@ -237,9 +238,9 @@ public class spNewGame extends AppCompatActivity {
         }
     }
 
-    private void resetHighlight(){
-        for(int i = 0; i < 4; ++i){
-            for(int j = 0; j < 4; ++j){
+    private void resetHighlight() {
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
                 sq = (SquareTextView) findViewById(matrix[i][j]);
 
                 sq.setBackgroundColor(Color.WHITE);
@@ -248,10 +249,10 @@ public class spNewGame extends AppCompatActivity {
     }
 
     //TODO This function should be used properly
-    public void submit(){
+    public void submit() {
         // clear touchPath
-        for(int i = 0; i < 4; ++i){
-            for(int j = 0; j < 4; ++j){
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
                 touchPath[i][j] = 0;
             }
         }
@@ -299,25 +300,17 @@ public class spNewGame extends AppCompatActivity {
         active = false;
     }
 
-    public int calculateScore(String word){
+    public int calculateScore(String word) {
 
-        if (word.length() == 3 || word.length() == 4){
+        if (word.length() == 3 || word.length() == 4) {
             score++;
-        }
-
-        else if (word.length() == 5 ){
+        } else if (word.length() == 5) {
             score = score + 2;
-        }
-
-        else if (word.length() == 6 ){
+        } else if (word.length() == 6) {
             score = score + 3;
-        }
-
-        else if (word.length() == 7 ){
+        } else if (word.length() == 7) {
             score = score + 5;
-        }
-
-        else if (word.length() >= 8 ){
+        } else if (word.length() >= 8) {
             score = score + 10;
         }
 
@@ -325,48 +318,47 @@ public class spNewGame extends AppCompatActivity {
     }
 
 
-    public  void clickOnSubmitButton(View view) {
+    public void clickOnSubmitButton(View view) {
 
-            String input = wordIn.getText().toString();
+        String input = wordIn.getText().toString();
 
-            if(input.length()<3){
-                Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
-            }
-            else {
+        if (input.length() < 3) {
+            Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
+        } else {
 
 
-                boolean isValidWord = dbHelper.getWord(input);
+            boolean isValidWord = dbHelper.getWord(input);
 
-                if (isValidWord == true) {
+            if (isValidWord == true) {
 
-                    if (selected_words.contains(letter_path) == false) {
-                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
-                        selected_words.add(letter_path);
-                        word_count++;
-                        scoreView.setText("Your Score: " + calculateScore(input));
-                    } else {
-                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
-                    }
-
+                if (selected_words.contains(letter_path) == false) {
+                    Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                    selected_words.add(letter_path);
+                    word_count++;
+                    scoreView.setText("Your Score: " + calculateScore(input));
                 } else {
-                    Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
                 }
-            }
-            wordIn.setText("");
-            letter_path = "";
-            resetHighlight();
-        }
 
-    public  void clickOnCancelButton(View view) {
+            } else {
+                Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
+
+            }
+        }
         wordIn.setText("");
-        letter_path ="";
+        letter_path = "";
+        resetHighlight();
+    }
+
+    public void clickOnCancelButton(View view) {
+        wordIn.setText("");
+        letter_path = "";
         resetHighlight();
     }
 
     public static Intent newIntent(Context packageContext, String gameLevel) {
-        Intent i = new Intent( packageContext, spNewGame.class);
-        i.putExtra("LEVEL",gameLevel);
+        Intent i = new Intent(packageContext, spNewGame.class);
+        i.putExtra("LEVEL", gameLevel);
         return i;
     }
 
