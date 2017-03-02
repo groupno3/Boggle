@@ -17,8 +17,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -46,6 +49,8 @@ public class mpNewGame extends AppCompatActivity {
     BoardCreator bc;
     String [][] board;
     String level;
+    String Level;
+    String PlayerType;
 
     private LinearLayout main;
     private SquareTextView sq;
@@ -69,14 +74,14 @@ public class mpNewGame extends AppCompatActivity {
 
         //get selected level
         Bundle extras = getIntent().getExtras();
-        String Level = extras.getString("LEVEL");
+        Level = extras.getString("LEVEL");
+        PlayerType = extras.getString("TYPE");
         this.level = Level;
 
         dbHelper = new WordDBHelper(getApplicationContext());
         db = dbHelper.getWritableDatabase();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        Toast.makeText(getApplicationContext(), "Level: "+ Level, Toast.LENGTH_LONG).show();
         // ShakeDetector initialization
 
         scoreView = (TextView) findViewById(R.id.score_textView);
@@ -148,28 +153,41 @@ public class mpNewGame extends AppCompatActivity {
         letter_path ="";
         wordIn.setText(word);
         selected_words = new ArrayList<String>();
-        bc = new BoardCreator(dbHelper, level);
-
 
         //gen board
-        for(int i=0;i<4;++i) {
-            for (int j = 0; j < 4; ++j) {
-                sq = (SquareTextView) findViewById(matrix[i][j]);
-                touchPath[i][j] = 0;
-                String[] str = bc.getBoardLayout();
-                MultiPlayerBoard mpb = new MultiPlayerBoard(str);
-
-                //stores the current board to fire base
-                mDatabaseReference.child("Board").setValue(mpb);
-
-
-                board[i][j] = str[i*4+j];
-
-                sq.setText(board[i][j], TextView.BufferType.EDITABLE);
-
-            }
+        if(PlayerType.equals("HOST")) {
+            Toast.makeText(getApplicationContext(), "Level: "+ Level, Toast.LENGTH_LONG).show();
+            bc = new BoardCreator(dbHelper, level);
+            String[] str = bc.getBoardLayout();
+            generateBoard(str);
+            MultiPlayerBoard mpb = new MultiPlayerBoard(str);
+            mDatabaseReference.child("Board").setValue(mpb);
+            //Toast.makeText(getApplicationContext(), " Pass Code for Player 2: " + mpb.PassCode, Toast.LENGTH_LONG).show();
+            showDialog(" Pass Code for Player 2: " + mpb.PassCode);
         }
-        //start timer
+        else if(PlayerType.equals("JOIN")) {
+
+            Toast.makeText(getApplicationContext(), "MODE: "+ PlayerType, Toast.LENGTH_LONG).show();
+
+
+            ValueEventListener postListner = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    MultiPlayerBoard MPB = dataSnapshot.child("Board").getValue(MultiPlayerBoard.class);
+                    String[] str = new String[MPB.BoardList.size()];
+                    str =  MPB.BoardList.toArray(str);
+                    generateBoard(str);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+
+            mDatabaseReference.addValueEventListener(postListner);
+        }
+
+            //start timer
         // TODO: create motion lock
         new CountDownTimer(180000, 1000) {
 
@@ -196,7 +214,7 @@ public class mpNewGame extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         //quit go back to Mainacitivyt
-                        Intent intent = new Intent(mpNewGame.this, SinglePlayer.class);
+                        Intent intent = new Intent(mpNewGame.this, SinglePlayerLevels.class);
                         startActivity(intent);
 
                     }
@@ -378,10 +396,31 @@ public class mpNewGame extends AppCompatActivity {
         resetHighlight();
     }
 
-    public static Intent newIntent(Context packageContext, String gameLevel) {
+    public static Intent newIntent(Context packageContext, String gameLevel, String playerType) {
         Intent i = new Intent( packageContext, mpNewGame.class);
         i.putExtra("LEVEL",gameLevel);
+        i.putExtra("TYPE",playerType);
         return i;
+    }
+
+    public void generateBoard(String[] str){
+
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                sq = (SquareTextView) findViewById(matrix[i][j]);
+                touchPath[i][j] = 0;
+                board[i][j] = str[i * 4 + j];
+                sq.setText(board[i][j], TextView.BufferType.EDITABLE);
+            }
+        }
+    }
+
+    public void showDialog(String TextToShow){
+
+        alertDialog = new AlertDialog.Builder(mpNewGame.this);
+        alertDialog.setTitle(TextToShow);
+        alertDialog.create();
+        alertDialog.show();
     }
 
 

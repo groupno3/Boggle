@@ -25,7 +25,11 @@ public class ShakeActivity extends Activity {
         setContentView(R.layout.shake_screen);
 
         Bundle extras = getIntent().getExtras();
+        final String Mode = extras.getString("MODE");
         final String Level = extras.getString("LEVEL");
+        final String PlayerType = extras.getString("TYPE");
+
+        //Toast.makeText(getApplicationContext(), "TYPE: "+ PlayerType, Toast.LENGTH_LONG).show();
 
         shake_button = (Button) findViewById(R.id.button5);
 
@@ -48,10 +52,19 @@ public class ShakeActivity extends Activity {
                 finish();
                 startActivity(getIntent());
         */
+                if(Mode.equals("SinglePlayer")) {
+                    System.out.println("SHAKE count " + count);
+                    Intent in = spNewGame.newIntent(ShakeActivity.this, Level);
+                    startActivity(in);
+                }
 
-                System.out.println("SHAKE count " + count);
-                Intent in = spNewGame.newIntent(ShakeActivity.this,Level);
-                startActivity(in);
+                else if(Mode.equals("MultiPlayer")) {
+                    System.out.println("SHAKE count " + count);
+                    Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType);
+                    startActivity(in);
+                }
+
+
 
             }
 
@@ -62,8 +75,18 @@ public class ShakeActivity extends Activity {
         shake_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent in = spNewGame.newIntent(ShakeActivity.this,Level);
-                startActivity(in);
+                if(Mode.equals("SinglePlayer")) {
+                    //System.out.println("SHAKE count " + count);
+                    Intent in = spNewGame.newIntent(ShakeActivity.this, Level);
+                    startActivity(in);
+                }
+
+                else if(Mode.equals("MultiPlayer")) {
+                    //System.out.println("SHAKE count " + count);
+                    Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType);
+                    startActivity(in);
+                }
+
             }
         });
 
@@ -85,9 +108,11 @@ public class ShakeActivity extends Activity {
         mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
-    public static Intent newIntent(Context packageContext, String gameLevel) {
+    public static Intent newIntent(Context packageContext, String gameMode, String gameLevel, String PlayerType) {
         Intent i = new Intent( packageContext, ShakeActivity.class);
         i.putExtra("LEVEL",gameLevel);
+        i.putExtra("MODE",gameMode);
+        i.putExtra("TYPE",PlayerType);
         return i;
     }
 
