@@ -164,6 +164,7 @@ public class mpNewGame extends AppCompatActivity {
         selected_words = new ArrayList<String>();
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("Waiting for Player 2 to join...");
+        alertDialog.create();
 
         //gen board
         if(PlayerType.equals("HOST")) {
@@ -464,8 +465,6 @@ public class mpNewGame extends AppCompatActivity {
 
                     }
                 });
-
-                alertDialog.create();
                 if(active)
                     alertDialog.show();
 
