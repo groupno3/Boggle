@@ -61,7 +61,7 @@ public class JoinActivity extends Activity {
             }
         });
 
-        Toast.makeText(getApplicationContext(), "Passcode: " + PassCode, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Passcode: " + PassCode, Toast.LENGTH_SHORT).show();
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
