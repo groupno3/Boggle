@@ -1,5 +1,6 @@
 package com.projects.sweproject.boggle;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -196,7 +197,12 @@ public class spNewGame extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             // User clicked OK button
                             //quit go back to Mainacitivyt
-
+                            String name = highScoreName.getText().toString();
+                            ContentValues vals = new ContentValues();
+                            vals.put(HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_PLAYER, name);
+                            vals.put(HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_SCORE, score);
+                            vals.put(HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_LEVEL, level);
+                            scoreDB.insert(HighScoreReaderContract.HighScoreEntry.TABLE_NAME, null, vals);
                         }
                     });
 
