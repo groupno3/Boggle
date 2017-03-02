@@ -3,6 +3,7 @@ package com.projects.sweproject.boggle;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,6 +13,7 @@ public class MainActivity extends Activity {
 
     private ImageButton singleButton;
     private ImageButton multiButton;
+    private ImageButton highScoreButton;
     private ImageButton quit;
 
     @Override
@@ -37,6 +39,18 @@ public class MainActivity extends Activity {
                 startActivity(multiPlayerScreen);
             }
         });
+
+
+        highScoreButton = (ImageButton) findViewById(R.id.button3);
+        highScoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent highScoreScreen = new Intent(MainActivity.this, HighScore.class);
+                startActivity(highScoreScreen);
+            }
+        });
+
+
 
         quit = (ImageButton)findViewById(R.id.button4);
         quit.setOnClickListener(new View.OnClickListener() {
