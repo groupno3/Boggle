@@ -86,6 +86,42 @@ public class HighScoreDBHelper extends SQLiteOpenHelper{
         }
     }
 
+    public HighScoreKeeper getTopFiveScoreboard() {
+        HighScoreKeeper keeper = new HighScoreKeeper();
+        getTopFiveByLevel("Easy", keeper.easyNames, keeper.easyScores);
+        getTopFiveByLevel("Medium", keeper.mediumNames, keeper.mediumScores);
+        getTopFiveByLevel("Hard", keeper.hardNames, keeper.hardScores);
+
+        return keeper;
+    }
+
+    private void getTopFiveByLevel(String level, ArrayList<String> names, ArrayList<String> scores) {
+        SQLiteDatabase db = this.getReadableDatabase();
+//        private Cursor queryLastEvents() {
+//            return getDatabase().query("table_name", null, null, null, null, null, "row_id DESC", "10");
+//        }
+
+        Cursor cursor = db.query(
+                HighScoreReaderContract.HighScoreEntry.TABLE_NAME,
+                new String[] {HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_PLAYER,
+                        HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_SCORE},
+                "level=?",
+                new String[] {level},
+                null,
+                null,
+                HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_SCORE,
+                "5"
+        );
+        while (cursor.moveToNext()) {
+            int score = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_SCORE));
+            String name = cursor.getString(
+                    cursor.getColumnIndexOrThrow(HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_PLAYER));
+            names.add(name);
+            scores.add(Integer.toString(score));
+        }
+    }
+
 //    FeedEntry.TABLE_NAME,                     // The table to query
 //    projection,                               // The columns to return
 //    selection,                                // The columns for the WHERE clause
