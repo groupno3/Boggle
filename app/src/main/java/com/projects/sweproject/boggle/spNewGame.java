@@ -58,6 +58,8 @@ public class spNewGame extends AppCompatActivity {
     private WordDBHelper dbHelper;
     SQLiteDatabase db;
 
+    private HighScoreDBHelper scoreDBHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

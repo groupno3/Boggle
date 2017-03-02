@@ -54,6 +54,8 @@ public class MainActivity extends Activity {
         WordDBHelper dbHelper = new WordDBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+        HighScoreDBHelper scoreDBHelper = new HighScoreDBHelper(getApplicationContext());
+        SQLiteDatabase scoreDb = dbHelper.getWritableDatabase();
 
         //Code to evaluate DB expression - we can inspect using this.
 //        String[] projection = {
