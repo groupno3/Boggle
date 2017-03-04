@@ -72,7 +72,7 @@ public class mpNewGame extends AppCompatActivity {
     private WordDBHelper dbHelper;
     SQLiteDatabase db;
 
-    private HighScoreMultiPlayerDBHelper scoreMultiDBHelper;
+    HighScoreMultiPlayerDBHelper scoreMultiDBHelper;
     SQLiteDatabase scoreMultiDb;
 
     private ProgressDialog mProgressDialog;
@@ -88,6 +88,9 @@ public class mpNewGame extends AppCompatActivity {
         Level = extras.getString("LEVEL");
         PlayerType = extras.getString("TYPE");
         this.level = Level;
+
+        scoreMultiDBHelper = new HighScoreMultiPlayerDBHelper(getApplicationContext());
+        scoreMultiDb = scoreMultiDBHelper.getWritableDatabase();
 
         alertDialog = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
         alertDialog.setTitle("GAME OVER!");
