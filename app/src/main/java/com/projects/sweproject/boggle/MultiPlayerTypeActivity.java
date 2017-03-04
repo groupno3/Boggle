@@ -9,14 +9,18 @@ import android.widget.ImageButton;
 /**
  * Created by emenpy on 1/30/17.
  */
-public class MultiPlayer extends Activity {
+public class MultiPlayerTypeActivity extends Activity {
 
-    ImageButton host;
-    ImageButton join;
-    String PlayerType;
+    private ImageButton host;
+    private ImageButton join;
+    private String PlayerType;
+    private String Passcode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+
 
         setContentView(R.layout.multi_player);
         host = (ImageButton)findViewById(R.id.hostbtn);
@@ -24,7 +28,8 @@ public class MultiPlayer extends Activity {
             @Override
             public void onClick(View v) {
                 PlayerType = "HOST";
-                Intent in = MultiPlayerLevels.newIntent(getApplicationContext(), PlayerType);
+
+                Intent in = new Intent(getApplicationContext(),PasscodeActivity.class);
                 startActivity(in);
             }
         });

@@ -187,7 +187,7 @@ public class mpNewGame extends AppCompatActivity {
 
             alertDialog = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
             alertDialog.setTitle("Pass code");
-            alertDialog.setMessage("Pass Code for Player 2: " + mpb.PassCode);
+           // alertDialog.setMessage("Pass Code for Player 2: " + mpb.PassCode);
 
             alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -198,7 +198,7 @@ public class mpNewGame extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
                             MultiPlayerBoard MPB = dataSnapshot.getValue(MultiPlayerBoard.class);
-                            isPlayer2In=MPB.Player2Joined;
+                          //  isPlayer2In=MPB.Player2Joined;
                             if(isPlayer2In){
                                 mProgressDialog.dismiss();
                                 startTimer();

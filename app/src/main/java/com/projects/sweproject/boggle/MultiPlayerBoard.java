@@ -11,7 +11,7 @@ public class MultiPlayerBoard {
     ArrayList<String> BoardList;
     ArrayList<String> Player1WordList;
     ArrayList<String> Player2WordList;
-    String PassCode;
+   String PassCode;
     boolean GameStarted;
     boolean Player2Joined;
     String AllWords;
@@ -24,16 +24,11 @@ public class MultiPlayerBoard {
         BoardList = new ArrayList();
         Player1WordList = new ArrayList();
         Player2WordList = new ArrayList();
-        GameStarted = false;
-        Player2Joined = false;
         AllWords = allWords;
 
         for (int i =0; i<Board.length; i++){
             this.BoardList.add(Board[i]);
         }
-
-        PassCode = String.valueOf((int)(Math.random()*10))+String.valueOf((int)(Math.random()*10))+String.valueOf((int)(Math.random()*10))
-                +String.valueOf(((int)Math.random()*10));
     }
 }
 

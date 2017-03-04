@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.projects.sweproject.boggle">
+          package="com.projects.sweproject.boggle">
 
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true"/>
 
     <application
         android:allowBackup="true"
@@ -12,25 +14,22 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
-
         </activity>
-        <activity android:name=".SinglePlayerLevels" />
-        <activity android:name=".MultiPlayerLevels" />
-        <activity android:name=".MultiPlayer" />
+        <activity android:name=".SinglePlayerLevels"/>
+        <activity android:name=".MultiPlayerLevels"/>
+        <activity android:name=".MultiPlayerTypeActivity"/>
         <activity android:name=".spNewGame"/>
         <activity android:name=".mpNewGame"/>
         <activity android:name=".ShakeActivity"/>
         <activity android:name=".JoinActivity"/>
         <activity android:name=".HighScore"/>
-        <activity android:name=".MultiPlayerModes" />
-        
-        
-        
+        <activity android:name=".MultiPlayerModes"/>
+        <activity android:name=".PasscodeActivity">
+        </activity>
     </application>
 
 </manifest>
