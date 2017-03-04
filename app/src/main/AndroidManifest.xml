@@ -27,6 +27,10 @@
         <activity android:name=".ShakeActivity"/>
         <activity android:name=".JoinActivity"/>
         <activity android:name=".HighScore"/>
+        <activity android:name=".MultiPlayerModes" />
+        
+        
+        
     </application>
 
 </manifest>

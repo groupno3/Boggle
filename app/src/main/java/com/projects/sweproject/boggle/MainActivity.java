@@ -71,6 +71,9 @@ public class MainActivity extends Activity {
         HighScoreDBHelper scoreDBHelper = new HighScoreDBHelper(getApplicationContext());
         SQLiteDatabase scoreDb = dbHelper.getWritableDatabase();
 
+        HighScoreMultiPlayerDBHelper scoreMultiDBHelper = new HighScoreMultiPlayerDBHelper(getApplicationContext());
+        SQLiteDatabase scoreMultiDb = dbHelper.getWritableDatabase();
+
         //Code to evaluate DB expression - we can inspect using this.
 //        String[] projection = {
 //                WordReaderContract.WordEntry._ID,

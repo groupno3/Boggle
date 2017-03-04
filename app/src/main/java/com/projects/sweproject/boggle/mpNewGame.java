@@ -1,6 +1,7 @@
 package com.projects.sweproject.boggle;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,6 +71,9 @@ public class mpNewGame extends AppCompatActivity {
 
     private WordDBHelper dbHelper;
     SQLiteDatabase db;
+
+    private HighScoreMultiPlayerDBHelper scoreMultiDBHelper;
+    SQLiteDatabase scoreMultiDb;
 
     private ProgressDialog mProgressDialog;
 
@@ -435,7 +441,7 @@ public class mpNewGame extends AppCompatActivity {
 
         //start timer
         // TODO: create motion lock
-        new CountDownTimer(120000, 1000) {
+        new CountDownTimer(20000, 1000) {
 
 
 
@@ -451,11 +457,59 @@ public class mpNewGame extends AppCompatActivity {
 
                 timer.setText("Time's up!");
 
-                if(PlayerType.equals("HOST"))
-                    alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
-                else if(PlayerType.equals("JOIN"))
-                    alertDialog.setMessage("The valid words in this board are:\n\n" + AllWords);
+                if(PlayerType.equals("HOST")) {
+                    if (scoreMultiDBHelper.isHighScore(score, level)) {
+                        alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
+                        final EditText highScoreName = new EditText(mpNewGame.this);
+                        highScoreName.setHint("Please enter your name:");
+                        alertDialog.setView(highScoreName);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                        alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                //quit go back to Mainacitivyt
+                                String name = highScoreName.getText().toString();
+                                ContentValues vals = new ContentValues();
+                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_PLAYER, name);
+                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_SCORE, score);
+                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, level);
+                                scoreMultiDb.insert(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.TABLE_NAME, null, vals);
+                                Intent intent = new Intent(mpNewGame.this, MainActivity.class);
+                                startActivity(intent);
 
+                            }
+                        });
+
+                    }
+                    alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
+                }
+                else if(PlayerType.equals("JOIN")) {
+                    if (scoreMultiDBHelper.isHighScore(score, level)) {
+                        alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
+                        final EditText highScoreName = new EditText(mpNewGame.this);
+                        highScoreName.setHint("Please enter your name:");
+                        alertDialog.setView(highScoreName);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                        alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                //quit go back to Mainacitivyt
+                                String name = highScoreName.getText().toString();
+                                ContentValues vals = new ContentValues();
+                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_PLAYER, name);
+                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_SCORE, score);
+                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, level);
+                                scoreMultiDb.insert(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.TABLE_NAME, null, vals);
+                                Intent intent = new Intent(mpNewGame.this, MainActivity.class);
+                                startActivity(intent);
+
+                            }
+                        });
+                    }
+                    alertDialog.setMessage("The valid words in this board are:\n\n" + AllWords);
+                }
                 alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
