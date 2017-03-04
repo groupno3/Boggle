@@ -27,12 +27,13 @@ public class SinglePlayerLevels extends Activity {
         medium = (ImageButton) findViewById(R.id.button2);
         hard = (ImageButton) findViewById(R.id.button3);
 
+        //newIntent(Context packageContext, String PlayerType, String gameMode, String gameLevel)
         easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Mode = "SinglePlayer";
                 Level = "Easy";
-                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, Mode, Level, null);
+                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, null, Mode, Level);
                 startActivity(in);
             }
         });
@@ -42,7 +43,7 @@ public class SinglePlayerLevels extends Activity {
             public void onClick(View v) {
                 Mode = "SinglePlayer";
                 Level = "Medium";
-                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, Mode, Level,null);
+                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, null, Mode, Level);
                 startActivity(in);
             }
         });
@@ -52,7 +53,7 @@ public class SinglePlayerLevels extends Activity {
             public void onClick(View v) {
                 Mode = "SinglePlayer";
                 Level = "Hard";
-                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, Mode, Level,null);
+                Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, null, Mode, Level);
                 startActivity(in);
             }
         });
