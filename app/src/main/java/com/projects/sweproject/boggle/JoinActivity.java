@@ -44,14 +44,14 @@ public class JoinActivity extends Activity {
 
         inputPassCode = (EditText) findViewById(R.id.pass);
 
-        mDatabaseReference.child("Board").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseReference.child("MultiGames").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                MultiPlayerBoard MPB = dataSnapshot.getValue(MultiPlayerBoard.class);
-                isGameOn= MPB.GameStarted;
-                PassCode=MPB.PassCode;
-                isPlayer2In=MPB.Player2Joined;
+                MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
+                isGameOn= MGI.GameStarted;
+                PassCode=MGI.PassCode;
+                isPlayer2In=MGI.Player2Joined;
 
             }
 
