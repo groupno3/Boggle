@@ -38,7 +38,7 @@ public class PasscodeActivity extends AppCompatActivity {
         t1 = (TextView) findViewById(R.id.textView2);
         t1.setText("Game Passcode: \n" +passcode +"\n\n Waiting for player 2... ");
 
-        mDatabaseReference.child("Board").addValueEventListener(new ValueEventListener() {
+        mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 

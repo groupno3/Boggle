@@ -22,7 +22,7 @@ public class MultiPlayerModes extends Activity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.multi_player);
+        setContentView(R.layout.multiplayer_modes);
 
 
         basic = (ImageButton)findViewById(R.id.basicbtn);
