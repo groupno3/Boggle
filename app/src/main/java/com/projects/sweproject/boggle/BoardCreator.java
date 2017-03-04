@@ -61,14 +61,14 @@ public class BoardCreator {
         boggleList.add(new BoggleDice(str15));
 
         do {
+            //shuffle the dice
+            Collections.shuffle(boggleList);
+
             //"roll" the dice and put the result into an array
             String output[] = new String[16];
             for (int i = 0; i < 16; i++) {
                 output[i] = (boggleList.get(i)).rollDice();
             }
-
-            //shuffle the dice
-            Collections.shuffle(boggleList);
 
             this.boardLayout = output;
 
