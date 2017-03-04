@@ -62,6 +62,7 @@ public class JoinActivity extends Activity {
         });
 
         //Toast.makeText(getApplicationContext(), "Passcode: " + PassCode, Toast.LENGTH_SHORT).show();
+        //newIntent(Context packageContext, String gameLevel, String playerType)
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,8 +71,8 @@ public class JoinActivity extends Activity {
                     if(isPlayer2In == false) {
                         if (PassCode.equals(inputPassCode.getText().toString())) {
                             PlayerType = "JOIN";
-                            mDatabaseReference.child("Board").child("GameStarted").setValue(true);
-                            mDatabaseReference.child("Board").child("Player2Joined").setValue(true);
+                            //mDatabaseReference.child("Board").child("GameStarted").setValue(true);
+                            mDatabaseReference.child("MultiGames").child("Player2Joined").setValue(true);
                             Intent in = mpNewGame.newIntent(getApplicationContext(), null, PlayerType);
                             startActivity(in);
                         }

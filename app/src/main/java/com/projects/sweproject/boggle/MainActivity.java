@@ -3,7 +3,6 @@ package com.projects.sweproject.boggle;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -35,7 +34,7 @@ public class MainActivity extends Activity {
         multiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent multiPlayerScreen = new Intent(MainActivity.this, MultiPlayer.class);
+                Intent multiPlayerScreen = new Intent(MainActivity.this, MultiPlayerTypeActivity.class);
                 startActivity(multiPlayerScreen);
             }
         });

@@ -58,7 +58,17 @@ public class ShakeActivity extends Activity {
                     startActivity(in);
                 }
 
-                else if(Mode.equals("MultiPlayer")) {
+                else if(Mode.equals("BASIC")) {
+                    System.out.println("SHAKE count " + count);
+                    Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType);
+                    startActivity(in);
+                }
+                else if(Mode.equals("CUTTHROAT")) {
+                    System.out.println("SHAKE count " + count);
+                    Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType);
+                    startActivity(in);
+                }
+                else if(Mode.equals("ROUNDS")) {
                     System.out.println("SHAKE count " + count);
                     Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType);
                     startActivity(in);
@@ -81,7 +91,7 @@ public class ShakeActivity extends Activity {
                     startActivity(in);
                 }
 
-                else if(Mode.equals("MultiPlayer")) {
+                else if(Mode.equals("MultiPlayerTypeActivity")) {
                     //System.out.println("SHAKE count " + count);
                     Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType);
                     startActivity(in);
@@ -108,11 +118,13 @@ public class ShakeActivity extends Activity {
         mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
-    public static Intent newIntent(Context packageContext, String gameMode, String gameLevel, String PlayerType) {
+    public static Intent newIntent(Context packageContext, String PlayerType, String gameMode, String gameLevel) {
         Intent i = new Intent( packageContext, ShakeActivity.class);
-        i.putExtra("LEVEL",gameLevel);
-        i.putExtra("MODE",gameMode);
         i.putExtra("TYPE",PlayerType);
+        i.putExtra("MODE",gameMode);
+        i.putExtra("LEVEL",gameLevel);
+
+
         return i;
     }
 

@@ -30,15 +30,17 @@ public class MultiPlayerLevels extends Activity {
 
         Bundle extras = getIntent().getExtras();
         final String PlayerType = extras.getString("TYPE");
+        final String PlayerMode = extras.getString("MODE");
 
         //Toast.makeText(getApplicationContext(), "TYPE: "+ PlayerType, Toast.LENGTH_LONG).show();
+        //newIntent(Context packageContext, String PlayerType, String gameMode, String gameLevel)
 
         easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mode = "MultiPlayer";
+                Mode = "MultiPlayerTypeActivity";
                 Level = "Easy";
-                Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, Mode, Level,PlayerType);
+                Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
                 startActivity(in);
             }
         });
@@ -46,9 +48,9 @@ public class MultiPlayerLevels extends Activity {
         medium.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mode = "MultiPlayer";
+                Mode = "MultiPlayerTypeActivity";
                 Level = "Medium";
-                Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, Mode, Level, PlayerType);
+                Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
                 startActivity(in);
             }
         });
@@ -56,17 +58,18 @@ public class MultiPlayerLevels extends Activity {
         hard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mode = "MultiPlayer";
+                Mode = "MultiPlayerTypeActivity";
                 Level = "Hard";
-                Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, Mode, Level,PlayerType);
+                Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
                 startActivity(in);
             }
         });
     }
 
-    public static Intent newIntent(Context packageContext, String PlayerType) {
+    public static Intent newIntent(Context packageContext, String PlayerType, String GameMode) {
         Intent i = new Intent( packageContext, MultiPlayerLevels.class);
         i.putExtra("TYPE",PlayerType);
+        i.putExtra("MODE",GameMode);
         return i;
     }
 }
