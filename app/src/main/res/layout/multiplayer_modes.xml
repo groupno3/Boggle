@@ -18,7 +18,7 @@
     <ImageButton
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:background="@drawable/host_button"
+        android:background="@drawable/basic_button"
         android:id="@+id/basicbtn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="120dp" />
@@ -27,7 +27,7 @@
     <ImageButton
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:background="@drawable/join_button"
+        android:background="@drawable/cutthoat_button"
         android:id="@+id/cutthroatbtn"
         android:layout_below="@+id/basicbtn"
         android:layout_centerHorizontal="true"
@@ -36,7 +36,7 @@
     <ImageButton
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:background="@drawable/join_button"
+        android:background="@drawable/multirounds_button"
         android:id="@+id/multiroundsbttn"
         android:layout_below="@+id/cutthroatbtn"
         android:layout_centerHorizontal="true"
