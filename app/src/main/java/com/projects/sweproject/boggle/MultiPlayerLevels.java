@@ -16,8 +16,8 @@ public class MultiPlayerLevels extends Activity {
     ImageButton easy;
     ImageButton medium;
     ImageButton hard;
-    String Level;
-    String Mode;
+    String Level="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +38,7 @@ public class MultiPlayerLevels extends Activity {
         easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mode = "MultiPlayerTypeActivity";
+
                 Level = "Easy";
                 Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
                 startActivity(in);
@@ -48,7 +48,6 @@ public class MultiPlayerLevels extends Activity {
         medium.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mode = "MultiPlayerTypeActivity";
                 Level = "Medium";
                 Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
                 startActivity(in);
@@ -58,7 +57,6 @@ public class MultiPlayerLevels extends Activity {
         hard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mode = "MultiPlayerTypeActivity";
                 Level = "Hard";
                 Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
                 startActivity(in);

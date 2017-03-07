@@ -283,8 +283,7 @@
                 android:id="@+id/submit_button"
                 android:layout_weight="1"
                 android:padding="5dp"
-                android:layout_margin="5dp"
-                android:onClick="clickOnSubmitButton"/>
+                android:layout_margin="5dp"/>
 
             <Button
                 android:text="Cancel"
@@ -293,8 +292,7 @@
                 android:id="@+id/cancel_button"
                 android:layout_weight="1"
                 android:padding="5dp"
-                android:layout_margin="5dp"
-                android:onClick="clickOnCancelButton"/>
+                android:layout_margin="5dp"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -28,39 +28,41 @@ public class PasscodeActivity extends AppCompatActivity {
         TextView t1;
         String passcode;
 
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        MultiGameInfo newGame = new MultiGameInfo();
-        passcode = newGame.PassCode;
-
-
-        mDatabaseReference.child("MultiGames").setValue(newGame);
-        t1 = (TextView) findViewById(R.id.textView2);
-        t1.setText("Game Passcode: \n" +passcode +"\n\n Waiting for player 2... ");
-
-        mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
+         ValueEventListener VE = new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
+               Boolean MGI = (boolean) dataSnapshot.getValue();
 
-                if(MGI.Player2Joined){
+                if(MGI){
                     //TODO: Add message to inform player 2 joined
                     Toast.makeText(getApplicationContext(),"Player 2 joined",Toast.LENGTH_SHORT).show();
+                    mDatabaseReference.removeEventListener(this);
                     Intent in = new Intent(getApplicationContext(), MultiPlayerModes.class);
                     startActivity(in);
                 }
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
 
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        MultiGameInfo newGame = new MultiGameInfo();
+        passcode = newGame.PassCode;
+        mDatabaseReference.child("MultiGames").setValue(newGame);
+
+        t1 = (TextView) findViewById(R.id.textView2);
+        t1.setText("Game Passcode: \n" +passcode +"\n\n Waiting for player 2... ");
+        mDatabaseReference.child("MultiGames").child("Player2Joined").addValueEventListener(VE);
 
 
 
     }
+
 
 }

@@ -9,18 +9,27 @@ import java.util.ArrayList;
 public class MultiGameInfo {
 
     public String PassCode;
-    public boolean GameStarted;
+    public boolean BoardStarted;
     public boolean Player2Joined;
     public String level;
+
+    public int Player1Score;
+    public int Player2Score;
+
+    public String Mode;
     public ArrayList<MultiPlayerBoard> Boards;
 
     public MultiGameInfo(){
 
         Boards = new ArrayList();
-        GameStarted = false;
+        BoardStarted = false;
         Player2Joined = false;
         PassCode = String.valueOf((int)(Math.random()*10))+String.valueOf((int)(Math.random()*10))+String.valueOf((int)(Math.random()*10))
                 +String.valueOf(((int)Math.random()*10));
         level ="";
+        Player1Score=0;
+        Player2Score=0;
+        Mode="";
+
     }
 }

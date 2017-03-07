@@ -15,6 +15,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,6 +57,9 @@ public class spNewGame extends AppCompatActivity {
     private ArrayList<String> selected_words;
     // The following are used for the shake detection
 
+    Button SubmitButton;
+    Button CancelButton;
+
     private WordDBHelper dbHelper;
     SQLiteDatabase db;
 
@@ -64,13 +68,18 @@ public class spNewGame extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.game_layout);
+        setContentView(R.layout.sp_game_layout);
 
         //get selected level
         Bundle extras = getIntent().getExtras();
         String Level = extras.getString("LEVEL");
         this.level = Level;
 
+        SubmitButton = (Button) findViewById(R.id.submit_button);
+        CancelButton =  (Button) findViewById(R.id.cancel_button);
+
+        SubmitButton.setOnClickListener(clickOnSubmitButton);
+        CancelButton.setOnClickListener(clickOnCancelButton);
 
         scoreDBHelper = new HighScoreDBHelper(getApplicationContext());
         scoreDB = scoreDBHelper.getWritableDatabase();
@@ -229,6 +238,8 @@ public class spNewGame extends AppCompatActivity {
                 if (active) {
                     alertDialog.show();
                 }
+                SubmitButton.setEnabled(false);
+                CancelButton.setEnabled(false);
 
 
             }
@@ -383,43 +394,49 @@ public class spNewGame extends AppCompatActivity {
     }
 
 
-    public void clickOnSubmitButton(View view) {
+    View.OnClickListener clickOnSubmitButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
 
-        String input = wordIn.getText().toString();
+            String input = wordIn.getText().toString();
 
-        if (input.length() < 3) {
-            Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
-        } else {
-
-
-            boolean isValidWord = dbHelper.getWord(input);
-
-            if (isValidWord == true) {
-
-                if (selected_words.contains(letter_path) == false) {
-                    Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
-                    selected_words.add(letter_path);
-                    word_count++;
-                    scoreView.setText("Your Score: " + calculateScore(input));
-                } else {
-                    Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
-                }
-
-            } else {
-                Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
-
+            if(input.length()<3){
+                Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
             }
-        }
-        wordIn.setText("");
-        letter_path = "";
-        resetHighlight();
-    }
+            else {
+                boolean isValidWord = dbHelper.getWord(input);
+                if (isValidWord == true) {
 
-    public void clickOnCancelButton(View view) {
-        wordIn.setText("");
-        letter_path = "";
-        resetHighlight();
-    }
+                    if (selected_words.contains(letter_path) == false) {
+                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                        selected_words.add(letter_path);
+                        word_count++;
+                        scoreView.setText("Your Score: " + calculateScore(input));
+                    } else {
+                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            wordIn.setText("");
+            letter_path = "";
+            resetHighlight();
+
+        }
+    };
+
+    View.OnClickListener clickOnCancelButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            wordIn.setText("");
+            letter_path ="";
+            resetHighlight();
+
+        }
+    };
+
 
     public static Intent newIntent(Context packageContext, String gameLevel) {
         Intent i = new Intent(packageContext, spNewGame.class);
