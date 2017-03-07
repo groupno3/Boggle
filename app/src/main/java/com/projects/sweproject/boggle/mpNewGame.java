@@ -1,5 +1,6 @@
 package com.projects.sweproject.boggle;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,6 +44,7 @@ public class mpNewGame extends AppCompatActivity {
     int viewHeight;
     int viewWidth;
     int offset;
+    boolean player2TimerStarted = false;
     AlertDialog.Builder alertDialog;
     static boolean active = false;
 
@@ -55,13 +58,14 @@ public class mpNewGame extends AppCompatActivity {
     String level;
     String Level;
     String PlayerType;
+    String Mode;
 
     private LinearLayout main;
     private SquareTextView sq;
     private TextView wordIn;
     private TextView timer;
     private String letter, word,letter_path="";
-    private Boolean isPlayer2In = false;
+    private Boolean isPlayer2In;
     private String AllWords ="";
 
     private ArrayList<String> selected_words;
@@ -77,17 +81,25 @@ public class mpNewGame extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;
 
+    Button SubmitButton;
+    Button CancelButton;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.game_layout);
+        setContentView(R.layout.sp_game_layout);
 
         //get selected level
         Bundle extras = getIntent().getExtras();
         Level = extras.getString("LEVEL");
         PlayerType = extras.getString("TYPE");
+        Mode = extras.getString("MODE");
         this.level = Level;
+
+        SubmitButton = (Button) findViewById(R.id.submit_button);
+        CancelButton =  (Button) findViewById(R.id.cancel_button);
 
         scoreMultiDBHelper = new HighScoreMultiPlayerDBHelper(getApplicationContext());
         scoreMultiDb = scoreMultiDBHelper.getWritableDatabase();
@@ -172,79 +184,85 @@ public class mpNewGame extends AppCompatActivity {
         wordIn.setText(word);
         selected_words = new ArrayList<String>();
         mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("Waiting for Player 2 to join...");
+        mProgressDialog.setMessage("Waiting for host to join...");
         alertDialog.create();
 
         //gen board
         if(PlayerType.equals("HOST")) {
-            Toast.makeText(getApplicationContext(), "Level: "+ Level, Toast.LENGTH_LONG).show();
-            bc = new BoardCreator(dbHelper, level);
-            String[] str = bc.getBoardLayout();
-            generateBoard(str);
-            MultiPlayerBoard mpb = new MultiPlayerBoard(str, bc.getAllWordsInString());
-            mDatabaseReference.child("Board").setValue(mpb);
-            //Toast.makeText(getApplicationContext(), " Pass Code for Player 2: " + mpb.PassCode, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Level: "+ Level + "Mode: "+ Mode, Toast.LENGTH_LONG).show();
+//            bc = new BoardCreator(dbHelper, level);
+//            String[] str = bc.getBoardLayout();
+//            generateBoard(str);
 
-            alertDialog = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
-            alertDialog.setTitle("Pass code");
-           // alertDialog.setMessage("Pass Code for Player 2: " + mpb.PassCode);
+            SubmitButton.setOnClickListener(clickOnSubmitButton);
+            CancelButton.setOnClickListener(clickOnCancelButton);
 
-            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    mProgressDialog.show();
-
-                    mDatabaseReference.child("Board").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            MultiPlayerBoard MPB = dataSnapshot.getValue(MultiPlayerBoard.class);
-                          //  isPlayer2In=MPB.Player2Joined;
-                            if(isPlayer2In){
-                                mProgressDialog.dismiss();
-                                startTimer();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-                }
-            });
-
-            alertDialog.create().show();
-
-            //mProgressDialog.dismiss();
-        }
-        else if(PlayerType.equals("JOIN")) {
-
-            Toast.makeText(getApplicationContext(), "MODE: "+ PlayerType, Toast.LENGTH_LONG).show();
-
-
-            ValueEventListener postListner = new ValueEventListener() {
+            mDatabaseReference.child("MultiGames").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    MultiPlayerBoard MPB = dataSnapshot.child("Board").getValue(MultiPlayerBoard.class);
-                    String[] str = new String[MPB.BoardList.size()];
-                    str =  MPB.BoardList.toArray(str);
-                    AllWords = MPB.AllWords;
+
+                    MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
+                    bc = new BoardCreator(dbHelper, level);
+                    String[] str = bc.getBoardLayout();
                     generateBoard(str);
+                    MultiPlayerBoard mpb = new MultiPlayerBoard(str, bc.getAllWordsInString());
+                    //mDatabaseReference.child("MultiGames").child("Boards").
+                    MGI.Boards.add(0, mpb);
+                    MGI.level = Level;
+                    MGI.Mode=Mode;
+                    MGI.BoardStarted=true;
+                    mDatabaseReference.child("MultiGames").setValue(MGI);
                     startTimer();
                 }
+
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            };
+            });
 
-            mDatabaseReference.addValueEventListener(postListner);
+
         }
+        else if(PlayerType.equals("JOIN")) {
 
+            SubmitButton.setOnClickListener(clickOnSubmitButton);
+            CancelButton.setOnClickListener(clickOnCancelButton);
 
+            //close keyboard from last window
+            closeKeyBoard();
+            isPlayer2In = false;
+            mProgressDialog.show();
+            Toast.makeText(getApplicationContext(), "MODE: "+ PlayerType, Toast.LENGTH_LONG).show();
 
+            mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
+                    MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
+
+                    if(MGI.BoardStarted){
+
+                        String[] board = new String[MGI.Boards.get(0).BoardList.size()];
+                        board = MGI.Boards.get(0).BoardList.toArray(board);
+                        generateBoard(board);
+                        Level = MGI.level;
+                        AllWords = MGI.Boards.get(0).AllWords;
+                        mProgressDialog.dismiss();
+                        if(!player2TimerStarted)
+                        {
+                            player2TimerStarted =true;
+                            startTimer();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     private void track(int x, int y) {
@@ -290,7 +308,6 @@ public class mpNewGame extends AppCompatActivity {
         for(int i = 0; i < 4; ++i){
             for(int j = 0; j < 4; ++j){
                 sq = (SquareTextView) findViewById(matrix[i][j]);
-
                 sq.setBackgroundColor(Color.WHITE);
             }
         }
@@ -374,7 +391,9 @@ public class mpNewGame extends AppCompatActivity {
     }
 
 
-    public  void clickOnSubmitButton(View view) {
+    View.OnClickListener clickOnSubmitButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
 
             String input = wordIn.getText().toString();
 
@@ -382,10 +401,7 @@ public class mpNewGame extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
             }
             else {
-
-
                 boolean isValidWord = dbHelper.getWord(input);
-
                 if (isValidWord == true) {
 
                     if (selected_words.contains(letter_path) == false) {
@@ -396,27 +412,40 @@ public class mpNewGame extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
                     }
-
                 } else {
                     Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
-
                 }
             }
             wordIn.setText("");
             letter_path = "";
             resetHighlight();
+            if(PlayerType.equals("HOST"))
+                mDatabaseReference.child("MultiGames").child("Player1Score").setValue(score);
+            else if(PlayerType.equals("JOIN"))
+                mDatabaseReference.child("MultiGames").child("Player2Score").setValue(score);
+
+
         }
+    };
 
-    public  void clickOnCancelButton(View view) {
-        wordIn.setText("");
-        letter_path ="";
-        resetHighlight();
-    }
+    View.OnClickListener clickOnCancelButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
 
-    public static Intent newIntent(Context packageContext, String gameLevel, String playerType) {
+            wordIn.setText("");
+            letter_path ="";
+            resetHighlight();
+
+        }
+    };
+
+
+
+    public static Intent newIntent(Context packageContext, String gameLevel, String playerType, String gameMode) {
         Intent i = new Intent( packageContext, mpNewGame.class);
         i.putExtra("LEVEL",gameLevel);
         i.putExtra("TYPE",playerType);
+        i.putExtra("MODE",gameMode);
         return i;
     }
 
@@ -432,19 +461,11 @@ public class mpNewGame extends AppCompatActivity {
         }
     }
 
-    public void showDialog(String TextToShow){
-
-        alertDialog = new AlertDialog.Builder(mpNewGame.this);
-        alertDialog.setTitle(TextToShow);
-        alertDialog.create();
-        alertDialog.show();
-    }
-
     public void startTimer(){
 
         //start timer
         // TODO: create motion lock
-        new CountDownTimer(20000, 1000) {
+        new CountDownTimer(180000, 1000) {
 
 
 
@@ -461,7 +482,7 @@ public class mpNewGame extends AppCompatActivity {
                 timer.setText("Time's up!");
 
                 if(PlayerType.equals("HOST")) {
-                    if (scoreMultiDBHelper.isHighScore(score, level)) {
+                    if (scoreMultiDBHelper.isHighScore(score, Level)) {
                         alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
                         final EditText highScoreName = new EditText(mpNewGame.this);
                         highScoreName.setHint("Please enter your name:");
@@ -476,8 +497,9 @@ public class mpNewGame extends AppCompatActivity {
                                 ContentValues vals = new ContentValues();
                                 vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_PLAYER, name);
                                 vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_SCORE, score);
-                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, level);
+                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, Level);
                                 scoreMultiDb.insert(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.TABLE_NAME, null, vals);
+                                closeKeyBoard();
                                 Intent intent = new Intent(mpNewGame.this, MainActivity.class);
                                 startActivity(intent);
 
@@ -488,7 +510,7 @@ public class mpNewGame extends AppCompatActivity {
                     alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
                 }
                 else if(PlayerType.equals("JOIN")) {
-                    if (scoreMultiDBHelper.isHighScore(score, level)) {
+                    if (scoreMultiDBHelper.isHighScore(score, Level)) {
                         alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
                         final EditText highScoreName = new EditText(mpNewGame.this);
                         highScoreName.setHint("Please enter your name:");
@@ -503,8 +525,9 @@ public class mpNewGame extends AppCompatActivity {
                                 ContentValues vals = new ContentValues();
                                 vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_PLAYER, name);
                                 vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_SCORE, score);
-                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, level);
+                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, Level);
                                 scoreMultiDb.insert(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.TABLE_NAME, null, vals);
+                                closeKeyBoard();
                                 Intent intent = new Intent(mpNewGame.this, MainActivity.class);
                                 startActivity(intent);
 
@@ -524,10 +547,17 @@ public class mpNewGame extends AppCompatActivity {
                 });
                 if(active)
                     alertDialog.show();
-
+                SubmitButton.setEnabled(false);
+                CancelButton.setEnabled(false);
             }
         }.start();
+
     }
 
+    public void closeKeyBoard(){
 
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+    }
 }
