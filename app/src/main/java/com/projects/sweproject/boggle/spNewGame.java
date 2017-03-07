@@ -140,7 +140,6 @@ public class spNewGame extends AppCompatActivity {
         startGame();
     }
 
-
     public int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -152,13 +151,11 @@ public class spNewGame extends AppCompatActivity {
 
     private void startGame() {
         //clear
-
         word = "";
         letter_path = "";
         wordIn.setText(word);
         selected_words = new ArrayList<String>();
         bc = new BoardCreator(dbHelper, level);
-
 
         //gen board
         for (int i = 0; i < 4; ++i) {
@@ -174,24 +171,16 @@ public class spNewGame extends AppCompatActivity {
         // TODO: create motion lock
         new CountDownTimer(60000, 1000) {
 
-
             public void onTick(long millisUntilFinished) {
-
                 timer.setText("Time left: " + ((millisUntilFinished / 1000) / 60) + ":" + ((String.format("%02d", (millisUntilFinished / 1000) % 60))));
-
             }
 
             public void onFinish() {
 
-
                 timer.setText("Time's up!");
-
 
                 alertDialog = new AlertDialog.Builder(spNewGame.this, R.style.MyAlertDialogStyle);
                 //if player has high score show game over, otherwise not show it
-
-
-
 
                 if(scoreDBHelper.isHighScore(score, level)) {
                     alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
@@ -221,13 +210,12 @@ public class spNewGame extends AppCompatActivity {
                 else
                     alertDialog.setTitle("GAME OVER!");
 
-
                 alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
 
                 alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
-                        //quit go back to Mainacitivyt
+                        //quit go back to Main activity
                         Intent intent = new Intent(spNewGame.this, SinglePlayerLevels.class);
                         startActivity(intent);
 
@@ -276,9 +264,6 @@ public class spNewGame extends AppCompatActivity {
                             wordIn.setText(word);
                             //wordIn.setGravity(Gravity.LEFT);
 
-
-                            //un highlight
-
                             touchPath[i][j] = 1;
                         }
                     }
@@ -298,7 +283,7 @@ public class spNewGame extends AppCompatActivity {
     }
 
     //TODO This function should be used properly
-    public void submit() {
+    public void touchReset() {
         // clear touchPath
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
@@ -307,9 +292,9 @@ public class spNewGame extends AppCompatActivity {
         }
         // clear word
         word = "";
-        //wordIn.setText("");
-        //wordIn.append(" ");
-        //resetHighlight();
+        wordIn.setText("");
+        letter_path = "";
+        resetHighlight();
     }
 
     public boolean dispatchTouchEvent(MotionEvent event){
@@ -319,49 +304,23 @@ public class spNewGame extends AppCompatActivity {
 
         switch (EA){
             case MotionEvent.ACTION_DOWN:
-                Log.d("*** DispatchTouch :: ","Action Down X:"+X+" Y:"+Y);
+                //Log.d("*** DispatchTouch :: ","Action Down X:"+X+" Y:"+Y);
                 track(X, Y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d("*** DispatchTouch :: ","Action Move X:"+X+" Y:"+Y);
+                //Log.d("*** DispatchTouch :: ","Action Move X:"+X+" Y:"+Y);
                 track(X, Y);
                 break;
+            /*
             case MotionEvent.ACTION_UP:
-                Log.d("*** DispatchTouch :: ","Action up X:"+X+" Y:"+Y);
+                //Log.d("*** DispatchTouch :: ","Action up X:"+X+" Y:"+Y);
                 submit();
                 break;
+             */
         }
 
         return super.dispatchTouchEvent(event);
     }
-
-    /*
-    public boolean onTouchEvent(MotionEvent event) {
-
-        int X = (int) event.getX();
-        int Y = (int) event.getY();
-        int EA = event.getAction();
-
-        switch (EA) {
-            case MotionEvent.ACTION_DOWN:
-                Log.d("*** onTouchEvent :: "," Event: Action Down");
-                track(X, Y);
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                Log.d("*** onTouchEvent :: "," Event: Action Move");
-                track(X, Y);
-                break;
-
-            case MotionEvent.ACTION_UP:
-                Log.d("*** onTouchEvent :: "," Event: Action up");
-                submit();
-                break;
-        }
-
-        return true;
-    }
-    */
 
     @Override
     public void onResume() {
@@ -393,7 +352,6 @@ public class spNewGame extends AppCompatActivity {
         return score;
     }
 
-
     View.OnClickListener clickOnSubmitButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -419,30 +377,21 @@ public class spNewGame extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
                 }
             }
-            wordIn.setText("");
-            letter_path = "";
-            resetHighlight();
-
+            touchReset();
         }
     };
 
     View.OnClickListener clickOnCancelButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            wordIn.setText("");
-            letter_path ="";
-            resetHighlight();
-
+            touchReset();
         }
     };
-
 
     public static Intent newIntent(Context packageContext, String gameLevel) {
         Intent i = new Intent(packageContext, spNewGame.class);
         i.putExtra("LEVEL", gameLevel);
         return i;
     }
-
 
 }
