@@ -71,6 +71,7 @@ public class mpNewGame extends AppCompatActivity {
     private ArrayList<String> selected_words;
     // The following are used for the shake detection
 
+
     private DatabaseReference mDatabaseReference;
 
     private WordDBHelper dbHelper;
@@ -78,11 +79,19 @@ public class mpNewGame extends AppCompatActivity {
 
     HighScoreMultiPlayerDBHelper scoreMultiDBHelper;
     SQLiteDatabase scoreMultiDb;
+    CutThroatMode CTM;
 
     private ProgressDialog mProgressDialog;
 
     Button SubmitButton;
     Button CancelButton;
+
+    private int Player1ListCount =1;
+    private int Player2ListCount =1;
+
+    private int player1score;
+    private int player2score;
+
 
 
 
@@ -100,6 +109,9 @@ public class mpNewGame extends AppCompatActivity {
 
         SubmitButton = (Button) findViewById(R.id.submit_button);
         CancelButton =  (Button) findViewById(R.id.cancel_button);
+
+
+
 
         scoreMultiDBHelper = new HighScoreMultiPlayerDBHelper(getApplicationContext());
         scoreMultiDb = scoreMultiDBHelper.getWritableDatabase();
@@ -163,6 +175,29 @@ public class mpNewGame extends AppCompatActivity {
         gridY += getStatusBarHeight();
         Log.i("*** TAG :: ","gridY = "+ gridY);
         //start
+
+        mDatabaseReference.child("MultiGames").child("CTMData").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                CTM = dataSnapshot.getValue(CutThroatMode.class);
+                if(Player1ListCount < CTM.Player1WordList.size()) {
+                    Toast.makeText(getApplicationContext(), "Player 1 selected : " + CTM.Player1WordList.get(CTM.Player1WordList.size() - 1).toUpperCase(), Toast.LENGTH_SHORT).show();
+                    Player1ListCount = CTM.Player1WordList.size();
+                }
+
+                if(Player2ListCount < CTM.Player2WordList.size()) {
+                    Toast.makeText(getApplicationContext(), "Player 2 selected : " + CTM.Player2WordList.get(CTM.Player2WordList.size() - 1).toUpperCase(), Toast.LENGTH_SHORT).show();
+                    Player2ListCount = CTM.Player2WordList.size();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         startGame();
     }
 
@@ -194,7 +229,7 @@ public class mpNewGame extends AppCompatActivity {
 //            String[] str = bc.getBoardLayout();
 //            generateBoard(str);
 
-            SubmitButton.setOnClickListener(clickOnSubmitButton);
+            SubmitButton.setOnClickListener(clickOnHostSubmitButton);
             CancelButton.setOnClickListener(clickOnCancelButton);
 
             mDatabaseReference.child("MultiGames").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -226,13 +261,15 @@ public class mpNewGame extends AppCompatActivity {
         }
         else if(PlayerType.equals("JOIN")) {
 
-            SubmitButton.setOnClickListener(clickOnSubmitButton);
+            SubmitButton.setOnClickListener(clickOnJoinSubmitButton);
             CancelButton.setOnClickListener(clickOnCancelButton);
 
             //close keyboard from last window
             closeKeyBoard();
             isPlayer2In = false;
             mProgressDialog.show();
+
+
             Toast.makeText(getApplicationContext(), "MODE: "+ PlayerType, Toast.LENGTH_LONG).show();
 
             mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
@@ -248,6 +285,7 @@ public class mpNewGame extends AppCompatActivity {
                         generateBoard(board);
                         Level = MGI.level;
                         AllWords = MGI.Boards.get(0).AllWords;
+                        Mode = MGI.Mode;
                         mProgressDialog.dismiss();
                         if(!player2TimerStarted)
                         {
@@ -391,53 +429,6 @@ public class mpNewGame extends AppCompatActivity {
     }
 
 
-    View.OnClickListener clickOnSubmitButton = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            String input = wordIn.getText().toString();
-
-            if(input.length()<3){
-                Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                boolean isValidWord = dbHelper.getWord(input);
-                if (isValidWord == true) {
-
-                    if (selected_words.contains(letter_path) == false) {
-                        Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
-                        selected_words.add(letter_path);
-                        word_count++;
-                        scoreView.setText("Your Score: " + calculateScore(input));
-                    } else {
-                        Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
-                }
-            }
-            wordIn.setText("");
-            letter_path = "";
-            resetHighlight();
-            if(PlayerType.equals("HOST"))
-                mDatabaseReference.child("MultiGames").child("Player1Score").setValue(score);
-            else if(PlayerType.equals("JOIN"))
-                mDatabaseReference.child("MultiGames").child("Player2Score").setValue(score);
-
-
-        }
-    };
-
-    View.OnClickListener clickOnCancelButton = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            wordIn.setText("");
-            letter_path ="";
-            resetHighlight();
-
-        }
-    };
 
 
 
@@ -478,10 +469,40 @@ public class mpNewGame extends AppCompatActivity {
 
             public void onFinish() {
 
+                //TODO: Modify this method to support Multi-rounds, should not break other modes
+
+                mDatabaseReference.child("MultiGames").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
+
+                        player1score = MGI.Player1Score;
+                        player2score = MGI.Player2Score;
+
+                        }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
 
                 timer.setText("Time's up!");
 
                 if(PlayerType.equals("HOST")) {
+                    if(player1score>player2score){
+                        //TODO: Minh, Display dialog to HOST that he won. Ex: Wohoo! You won! (with OK button which will close the button)
+                        //Toast.makeText(getApplicationContext(), "Player 1 won!", Toast.LENGTH_SHORT).show();
+                    }
+                    if(player1score<player2score){
+                        //TODO: Minh, Display dialog to HOST that he lost. Ex: Oh no! You lost! player 2 won. (with OK button which will close the button)
+                    }
+                    else{
+                        //TODO: Minh, Display dialog to HOST that it was a tie. Ex: Wow! It's a tie!. (with OK button which will close the button)
+                    }
+                    //then do this
                     if (scoreMultiDBHelper.isHighScore(score, Level)) {
                         alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
                         final EditText highScoreName = new EditText(mpNewGame.this);
@@ -510,6 +531,18 @@ public class mpNewGame extends AppCompatActivity {
                     alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
                 }
                 else if(PlayerType.equals("JOIN")) {
+
+                    if(player2score>player1score){
+                        //TODO: Minh, Display dialog to JOIN that he won. Ex: Wohoo! You won! (with OK button which will close the button)
+                       // Toast.makeText(getApplicationContext(), "Player 2 won!", Toast.LENGTH_SHORT).show();
+                    }
+                    if(player2score<player1score){
+                        //TODO: Minh, Display dialog to JOIN that he lost. Ex: Oh no! You lost! player 1 won. (with OK button which will close the button)
+                    }
+                    else{
+                        //TODO: Minh, Display dialog to HOST that it was a tie. Ex: Wow! It's a tie!. (with OK button which will close the button)
+                    }
+
                     if (scoreMultiDBHelper.isHighScore(score, Level)) {
                         alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
                         final EditText highScoreName = new EditText(mpNewGame.this);
@@ -560,4 +593,149 @@ public class mpNewGame extends AppCompatActivity {
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
     }
+
+    View.OnClickListener clickOnHostSubmitButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            final String input = wordIn.getText().toString();
+
+            if(input.length()<3){
+                Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                boolean isValidWord = dbHelper.getWord(input);
+                if (isValidWord == true) {
+
+                    //Cut-throat mode for HOST starts here
+
+                    if(Mode.equals("CUTTHROAT")){
+
+                        if (!selected_words.contains(letter_path)) {
+                            if (!CTM.Player2TraceList.contains(letter_path)){
+                                CTM.Player1TraceList.add(letter_path);
+                                CTM.Player1WordList.add(input);
+                                mDatabaseReference.child("MultiGames").child("CTMData").setValue(CTM);
+                                Player1ListCount++;
+                                Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                                selected_words.add(letter_path);
+                                word_count++;
+                                scoreView.setText("Your Score: " + calculateScore(input));
+
+                            }
+                            else
+                                Toast.makeText(getApplicationContext(), "Player 2 has already selected this word!", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                            Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
+                    }
+                    //Cut-throat mode for HOST ends here
+                    //Basic mode for HOST starts here
+                    else {
+                        if (selected_words.contains(letter_path) == false) {
+
+                            Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                            selected_words.add(letter_path);
+                            word_count++;
+                            scoreView.setText("Your Score: " + calculateScore(input));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                    //Basic mode for HOST ends here
+
+                    //TODO: Code your changes here for Multi-rounds if any
+
+
+                } else
+                    Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
+            }
+            wordIn.setText("");
+            letter_path = "";
+            resetHighlight();
+            mDatabaseReference.child("MultiGames").child("Player1Score").setValue(score);
+
+
+        }
+    };
+
+    View.OnClickListener clickOnJoinSubmitButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            final String input = wordIn.getText().toString();
+
+            if(input.length()<3){
+                Toast.makeText(getApplicationContext(), "Word should be longer than 2 letters!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                boolean isValidWord = dbHelper.getWord(input);
+                if (isValidWord == true) {
+
+                    //Cut-throat mode for JOIN starts here
+
+                    if(Mode.equals("CUTTHROAT")){
+
+                        if (!selected_words.contains(letter_path)) {
+                            if (!CTM.Player1TraceList.contains(letter_path)){
+                                CTM.Player2TraceList.add(letter_path);
+                                CTM.Player2WordList.add(input);
+                                mDatabaseReference.child("MultiGames").child("CTMData").setValue(CTM);
+                                Player2ListCount++;
+                                Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                                selected_words.add(letter_path);
+                                word_count++;
+                                scoreView.setText("Your Score: " + calculateScore(input));
+
+                            }
+                            else
+                                Toast.makeText(getApplicationContext(), "Player 1 has already selected this word!", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                            Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    //Cut-throat mode for JOIN ends here
+                    //Basic mode for JOIN starts here
+                    else {
+                        if (selected_words.contains(letter_path) == false) {
+
+                            Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+                            selected_words.add(letter_path);
+                            word_count++;
+                            scoreView.setText("Your Score: " + calculateScore(input));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                    //Basic mode for JOIN ends here
+                    //TODO: Code your changes here for Multi-rounds if any
+
+                } else
+                    Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
+            }
+            wordIn.setText("");
+            letter_path = "";
+            resetHighlight();
+            mDatabaseReference.child("MultiGames").child("Player2Score").setValue(score);
+
+
+        }
+    };
+
+
+    View.OnClickListener clickOnCancelButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            wordIn.setText("");
+            letter_path ="";
+            resetHighlight();
+
+        }
+    };
+
 }

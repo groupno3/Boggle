@@ -18,10 +18,15 @@ public class MultiGameInfo {
 
     public String Mode;
     public ArrayList<MultiPlayerBoard> Boards;
+    public CutThroatMode CTMData;
+
+
 
     public MultiGameInfo(){
 
         Boards = new ArrayList();
+        CTMData = new CutThroatMode();
+
         BoardStarted = false;
         Player2Joined = false;
         PassCode = String.valueOf((int)(Math.random()*10))+String.valueOf((int)(Math.random()*10))+String.valueOf((int)(Math.random()*10))
@@ -29,6 +34,7 @@ public class MultiGameInfo {
         level ="";
         Player1Score=0;
         Player2Score=0;
+
         Mode="";
 
     }
