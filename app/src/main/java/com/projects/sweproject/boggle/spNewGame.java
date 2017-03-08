@@ -32,6 +32,7 @@ public class spNewGame extends AppCompatActivity {
 
     Point[][] lMatrix;
     int[][] touchPath;
+    Point lastP;
     int gridX, gridY;
     int viewHeight;
     int viewWidth;
@@ -95,6 +96,7 @@ public class spNewGame extends AppCompatActivity {
         //init
         board = new String[4][4];
         lMatrix = new Point[4][4];
+        lastP = null;
         touchPath = new int[4][4];
         viewHeight = 0;
         viewWidth = 0;
@@ -169,7 +171,7 @@ public class spNewGame extends AppCompatActivity {
         }
         //start timer
         // TODO: create motion lock
-        new CountDownTimer(60000, 1000) {
+        new CountDownTimer(1800000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 timer.setText("Time left: " + ((millisUntilFinished / 1000) / 60) + ":" + ((String.format("%02d", (millisUntilFinished / 1000) % 60))));
@@ -239,32 +241,32 @@ public class spNewGame extends AppCompatActivity {
     private void track(int x, int y) {
         int pointX;
         int pointY;
-        //letter_path = "";
-        //wordIn.setText("");
-        //wordIn.append("X:"+x+" Y:"+y+"\n");
-        //wordIn.append("GX:"+gridX+"GY: "+gridY+" OS:"+offset+" VW:"+viewWidth+"\n");
+
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
-                //wordIn.append("|"+lMatrix[i][j].x+","+lMatrix[i][j].y+"|");
                 pointX = lMatrix[i][j].x + gridX;
                 pointY = lMatrix[i][j].y + gridY;
 
                 if (x > pointX + offset && x < pointX + viewWidth - offset) {
                     if (y > pointY + offset && y < pointY + viewHeight - offset) {
                         if (touchPath[i][j] == 0) {
+                            if (lastP == null)
+                                lastP = new Point(i,j);
+                            //Log.d("*** Touch Grid ::: ","lp: "+lastP.x+" "+lastP.y+" i,j"+i+j);
+                            if (lastP.x-1 <= i && i <= lastP.x+1 && lastP.y-1 <= j && j <= lastP.y+1) {
+                                sq = (SquareTextView) findViewById(matrix[i][j]);
+                                letter = sq.getText().toString();
 
-                            sq = (SquareTextView) findViewById(matrix[i][j]);
-                            letter = sq.getText().toString();
+                                //highlight
+                                sq.setBackgroundColor(Color.RED);
 
-                            //highlight
-                            sq.setBackgroundColor(Color.RED);
+                                word = word + letter;
+                                letter_path = letter_path + i + j;
+                                wordIn.setText(word);
 
-                            word = word + letter;
-                            letter_path = letter_path + i + j;
-                            wordIn.setText(word);
-                            //wordIn.setGravity(Gravity.LEFT);
-
-                            touchPath[i][j] = 1;
+                                touchPath[i][j] = 1;
+                                lastP = new Point(i,j);
+                            }
                         }
                     }
                 }
@@ -285,6 +287,7 @@ public class spNewGame extends AppCompatActivity {
     //TODO This function should be used properly
     public void touchReset() {
         // clear touchPath
+        lastP = null;
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
                 touchPath[i][j] = 0;
