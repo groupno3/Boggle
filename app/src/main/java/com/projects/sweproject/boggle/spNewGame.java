@@ -198,8 +198,10 @@ public class spNewGame extends AppCompatActivity {
                     final EditText highScoreName = new EditText(spNewGame.this);
                     highScoreName.setHint("Please enter your name:");
                     alertDialog.setView(highScoreName);
+                    /*
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    */
                     alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             // User clicked OK button
