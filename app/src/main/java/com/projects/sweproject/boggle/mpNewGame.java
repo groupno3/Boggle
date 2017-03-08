@@ -540,12 +540,40 @@ public class mpNewGame extends AppCompatActivity {
                     if(player1score>player2score){
                         //TODO: Minh, Display dialog to HOST that he won. Ex: Wohoo! You won! (with OK button which will close the button)
                         //Toast.makeText(getApplicationContext(), "Player 1 won!", Toast.LENGTH_SHORT).show();
+
+                        alertDialog.setMessage("Congratulation! The host won!");
+                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+
+
                     }
                     if(player1score<player2score){
                         //TODO: Minh, Display dialog to HOST that he lost. Ex: Oh no! You lost! player 2 won. (with OK button which will close the button)
+                        alertDialog.setMessage("Host lost! Better luck next time!");
+                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+
+
                     }
                     else{
                         //TODO: Minh, Display dialog to HOST that it was a tie. Ex: Wow! It's a tie!. (with OK button which will close the button)
+                        alertDialog.setMessage("Wow! We have a tie");
+                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                dialog.dismiss();
+                            }
+                        });
+
+
                     }
                     //then do this
                     if (scoreMultiDBHelper.isHighScore(score, Level)) {
@@ -580,12 +608,36 @@ public class mpNewGame extends AppCompatActivity {
                     if(player2score>player1score){
                         //TODO: Minh, Display dialog to JOIN that he won. Ex: Wohoo! You won! (with OK button which will close the button)
                        // Toast.makeText(getApplicationContext(), "Player 2 won!", Toast.LENGTH_SHORT).show();
+                        alertDialog.setMessage("Congratulation! Player 2 won!");
+                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
                     }
                     if(player2score<player1score){
                         //TODO: Minh, Display dialog to JOIN that he lost. Ex: Oh no! You lost! player 1 won. (with OK button which will close the button)
+
+                        alertDialog.setMessage("Sorry, You lost! Player 1 won. Better luck next time!");
+                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+
                     }
                     else{
                         //TODO: Minh, Display dialog to HOST that it was a tie. Ex: Wow! It's a tie!. (with OK button which will close the button)
+                        alertDialog.setMessage("Wow! We have a tie!");
+                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+
                     }
 
                     if (scoreMultiDBHelper.isHighScore(score, Level)) {
