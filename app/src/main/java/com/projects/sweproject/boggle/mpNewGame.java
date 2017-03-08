@@ -52,6 +52,7 @@ public class mpNewGame extends AppCompatActivity {
 
     int score = 0;
     int word_count = 0;
+    int boardNum = 0;
 
     BoardCreator bc;
     String [][] board;
@@ -303,6 +304,51 @@ public class mpNewGame extends AppCompatActivity {
         }
     }
 
+    // TODO: multi rounds
+    private void submitRound(){
+        // check words.
+        if(selected_words.size()>=5) {
+            mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
+                    // check lose condition
+                    // Get next board
+                    boardNum++;
+                    if(MGI.Boards.size()>=boardNum){
+                        // Board exists
+                        String[] board = new String[MGI.Boards.get(boardNum).BoardList.size()];
+                        board = MGI.Boards.get(boardNum).BoardList.toArray(board);
+                        generateBoard(board);
+                        AllWords = MGI.Boards.get(boardNum).AllWords;
+                    } else {
+                        // gen new board
+                        bc = new BoardCreator(dbHelper, level);
+                        String[] str = bc.getBoardLayout();
+                        AllWords = bc.getAllWordsInString();
+                        generateBoard(str);
+                        MultiPlayerBoard mpb = new MultiPlayerBoard(str, AllWords);
+                        MGI.Boards.add(boardNum, mpb);
+
+                        // Set new board
+                        // TODO: This is most likely wrong.
+                        mDatabaseReference.child("MultiGames").child("Boards").setValue(MGI.Boards);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            // sync time + points
+            // start.
+            //startTimer(oldtime);
+        } // else 'Not Enough words'
+    }
+
     private void track(int x, int y) {
         int pointX;
         int pointY;
@@ -351,7 +397,6 @@ public class mpNewGame extends AppCompatActivity {
         }
     }
 
-    //TODO This function should be used properly
     public void submit(){
         // clear touchPath
         for(int i = 0; i < 4; ++i){
@@ -645,7 +690,6 @@ public class mpNewGame extends AppCompatActivity {
                     }
                     //Basic mode for HOST ends here
 
-                    //TODO: Code your changes here for Multi-rounds if any
 
 
                 } else
@@ -712,7 +756,6 @@ public class mpNewGame extends AppCompatActivity {
                     }
 
                     //Basic mode for JOIN ends here
-                    //TODO: Code your changes here for Multi-rounds if any
 
                 } else
                     Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
