@@ -297,17 +297,16 @@ public class mpNewGame extends AppCompatActivity {
         }
     }
 
-    // TODO: multi rounds
+    // TODO: Multi Rounds, Round Submit function.
     // This is called when the player taps "submit Round"
     // You check if the player has submitted 5 words.
     // Then try to get the next board in the Boards array on FB.
     // if it doesn't exist you Gen a new one, if there is one you get it.
     // After the board is setup you add the players current time to the new two minutes.
     //
-    /*
-    private void submitRound(View view){
+    private void submitRound(View view) {
         // check words.
-        if(selected_words.size()>=5) {
+        if (selected_words.size() >= 5) {
             mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -315,7 +314,7 @@ public class mpNewGame extends AppCompatActivity {
                     // check lose condition
                     // Get next board
                     boardNum++;
-                    if(MGI.Boards.size()>=boardNum){
+                    if (MGI.Boards.size() >= boardNum) {
                         // Board exists so we get it from DB.
                         String[] board = new String[MGI.Boards.get(boardNum).BoardList.size()];
                         board = MGI.Boards.get(boardNum).BoardList.toArray(board);
@@ -331,7 +330,7 @@ public class mpNewGame extends AppCompatActivity {
                         MGI.Boards.add(boardNum, mpb);
 
                         // Set new board
-                        // TODO: Multi Round This is most likely wrong.
+                        // on Firebase.
                         mDatabaseReference.child("MultiGames").child("Boards").setValue(MGI.Boards);
                     }
 
@@ -348,7 +347,6 @@ public class mpNewGame extends AppCompatActivity {
             //startTimer(oldtime);
         } // else 'Not Enough words'
     }
-    */
 
     private void track(int x, int y) {
         int pointX;
@@ -485,27 +483,25 @@ public class mpNewGame extends AppCompatActivity {
         }
     }
 
-    // TODO:: Multi Rounds timer
-    /*  If the timer finishes in Multi round, then that player has lost. and Only needs to set the lost condition
-                    in FireBase.
-                    if mode == "rounds"
-                    firebase -> set lose condition for that player to true (a bool)
-                    if host
-                        firebase set -> player1lose == true;
-                    else if join
-                        firebase set -> player2lose == true;
-                    ...
-                    display your score & losing message.
-
-    public void startTimer(int time){
+    // TODO:: Multi Rounds, timer
+    /*  If the timer finishes in Multi round, then that player has lost.
+        and Only needs to set the lost condition in FireBase.
+        if mode == "rounds"
+        firebase -> set lose condition for that player to true (a bool)
+        if host
+            firebase set -> player1lose == true;
+        else if join
+            firebase set -> player2lose == true;
+        ...
+        display your score & losing message.
+    */
+    public void startTimer(int time) {
 
     }
-    */
 
     public void startTimer(){
 
         //start timer
-        // TODO: create motion lock
         new CountDownTimer(180000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -516,7 +512,8 @@ public class mpNewGame extends AppCompatActivity {
 
             public void onFinish() {
 
-                //TODO: Multi Round Modify this method to support Multi-rounds, should not break other modes
+                // TODO: Multi Rounds, Modify this method to support Multi-rounds, should not break other modes
+                // Multi rounds will most likely need its own timer that takes an int input.
                 /*  If the timer finishes in Multi round, then that player has lost. and Only needs to set the lost condition
                     in FireBase.
                     if mode == "rounds"
