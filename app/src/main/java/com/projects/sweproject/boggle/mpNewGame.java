@@ -304,6 +304,7 @@ public class mpNewGame extends AppCompatActivity {
     // if it doesn't exist you Gen a new one, if there is one you get it.
     // After the board is setup you add the players current time to the new two minutes.
     //
+    /*
     private void submitRound(View view){
         // check words.
         if(selected_words.size()>=5) {
@@ -347,6 +348,7 @@ public class mpNewGame extends AppCompatActivity {
             //startTimer(oldtime);
         } // else 'Not Enough words'
     }
+    */
 
     private void track(int x, int y) {
         int pointX;
