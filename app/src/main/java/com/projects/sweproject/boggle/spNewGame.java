@@ -171,7 +171,7 @@ public class spNewGame extends AppCompatActivity {
         }
         //start timer
         // TODO: create motion lock
-        new CountDownTimer(1800000, 1000) {
+        new CountDownTimer(180000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 timer.setText("Time left: " + ((millisUntilFinished / 1000) / 60) + ":" + ((String.format("%02d", (millisUntilFinished / 1000) % 60))));
@@ -301,7 +301,9 @@ public class spNewGame extends AppCompatActivity {
         letter_path = "";
         resetHighlight();
     }
-
+    public void submitRound(View view){
+        Toast.makeText(getApplicationContext(),"Submit Round",Toast.LENGTH_SHORT).show();
+    }
     public boolean dispatchTouchEvent(MotionEvent event){
         int X = (int) event.getX();
         int Y = (int) event.getY();

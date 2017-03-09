@@ -298,7 +298,13 @@ public class mpNewGame extends AppCompatActivity {
     }
 
     // TODO: multi rounds
-    private void submitRound(){
+    // This is called when the player taps "submit Round"
+    // You check if the player has submitted 5 words.
+    // Then try to get the next board in the Boards array on FB.
+    // if it doesn't exist you Gen a new one, if there is one you get it.
+    // After the board is setup you add the players current time to the new two minutes.
+    //
+    private void submitRound(View view){
         // check words.
         if(selected_words.size()>=5) {
             mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
@@ -324,7 +330,7 @@ public class mpNewGame extends AppCompatActivity {
                         MGI.Boards.add(boardNum, mpb);
 
                         // Set new board
-                        // TODO: This is most likely wrong.
+                        // TODO: Multi Round This is most likely wrong.
                         mDatabaseReference.child("MultiGames").child("Boards").setValue(MGI.Boards);
                     }
 
@@ -477,14 +483,28 @@ public class mpNewGame extends AppCompatActivity {
         }
     }
 
+    // TODO:: Multi Rounds timer
+    /*  If the timer finishes in Multi round, then that player has lost. and Only needs to set the lost condition
+                    in FireBase.
+                    if mode == "rounds"
+                    firebase -> set lose condition for that player to true (a bool)
+                    if host
+                        firebase set -> player1lose == true;
+                    else if join
+                        firebase set -> player2lose == true;
+                    ...
+                    display your score & losing message.
+
+    public void startTimer(int time){
+
+    }
+    */
+
     public void startTimer(){
 
         //start timer
         // TODO: create motion lock
         new CountDownTimer(180000, 1000) {
-
-
-
 
             public void onTick(long millisUntilFinished) {
 
@@ -494,8 +514,18 @@ public class mpNewGame extends AppCompatActivity {
 
             public void onFinish() {
 
-                //TODO: Modify this method to support Multi-rounds, should not break other modes
-
+                //TODO: Multi Round Modify this method to support Multi-rounds, should not break other modes
+                /*  If the timer finishes in Multi round, then that player has lost. and Only needs to set the lost condition
+                    in FireBase.
+                    if mode == "rounds"
+                    firebase -> set lose condition for that player to true (a bool)
+                    if host
+                        firebase set -> player1lose == true;
+                    else if join
+                        firebase set -> player2lose == true;
+                    ...
+                    display your score & losing message.
+                 */
                 mDatabaseReference.child("MultiGames").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
