@@ -39,6 +39,7 @@ public class mpNewGame extends AppCompatActivity {
             {R.id.Point30, R.id.Point31, R.id.Point32, R.id.Point33}};
 
     Point[][] lMatrix;
+    Point lastP;
     int[][] touchPath;
     int gridX,gridY;
     int viewHeight;
@@ -111,9 +112,6 @@ public class mpNewGame extends AppCompatActivity {
         SubmitButton = (Button) findViewById(R.id.submit_button);
         CancelButton =  (Button) findViewById(R.id.cancel_button);
 
-
-
-
         scoreMultiDBHelper = new HighScoreMultiPlayerDBHelper(getApplicationContext());
         scoreMultiDb = scoreMultiDBHelper.getWritableDatabase();
 
@@ -124,7 +122,6 @@ public class mpNewGame extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-
         // ShakeDetector initialization
 
         scoreView = (TextView) findViewById(R.id.score_textView);
@@ -133,6 +130,7 @@ public class mpNewGame extends AppCompatActivity {
         //init
         board = new String[4][4];
         lMatrix = new Point[4][4];
+        lastP = null;
         touchPath = new int[4][4];
         viewHeight = 0;
         viewWidth = 0;
@@ -166,7 +164,6 @@ public class mpNewGame extends AppCompatActivity {
             }
         });
 
-
         TypedValue tv = new TypedValue();
         if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
         {
@@ -174,7 +171,7 @@ public class mpNewGame extends AppCompatActivity {
                     TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
         }
         gridY += getStatusBarHeight();
-        Log.i("*** TAG :: ","gridY = "+ gridY);
+        //Log.i("*** TAG :: ","gridY = "+ gridY);
         //start
 
         mDatabaseReference.child("MultiGames").child("CTMData").addValueEventListener(new ValueEventListener() {
@@ -251,14 +248,11 @@ public class mpNewGame extends AppCompatActivity {
                     startTimer();
                 }
 
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
             });
-
-
         }
         else if(PlayerType.equals("JOIN")) {
 
@@ -269,7 +263,6 @@ public class mpNewGame extends AppCompatActivity {
             closeKeyBoard();
             isPlayer2In = false;
             mProgressDialog.show();
-
 
             Toast.makeText(getApplicationContext(), "MODE: "+ PlayerType, Toast.LENGTH_LONG).show();
 
@@ -316,13 +309,13 @@ public class mpNewGame extends AppCompatActivity {
                     // Get next board
                     boardNum++;
                     if(MGI.Boards.size()>=boardNum){
-                        // Board exists
+                        // Board exists so we get it from DB.
                         String[] board = new String[MGI.Boards.get(boardNum).BoardList.size()];
                         board = MGI.Boards.get(boardNum).BoardList.toArray(board);
                         generateBoard(board);
                         AllWords = MGI.Boards.get(boardNum).AllWords;
                     } else {
-                        // gen new board
+                        // There isn't a next board so we make one.
                         bc = new BoardCreator(dbHelper, level);
                         String[] str = bc.getBoardLayout();
                         AllWords = bc.getAllWordsInString();
@@ -352,10 +345,6 @@ public class mpNewGame extends AppCompatActivity {
     private void track(int x, int y) {
         int pointX;
         int pointY;
-        //letter_path = "";
-        //wordIn.setText("");
-        //wordIn.append("X:"+x+" Y:"+y+"\n");
-        //wordIn.append("GX:"+gridX+"GY: "+gridY+" OS:"+offset+" VW:"+viewWidth+"\n");
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
                 //wordIn.append("|"+lMatrix[i][j].x+","+lMatrix[i][j].y+"|");
@@ -365,22 +354,27 @@ public class mpNewGame extends AppCompatActivity {
                 if (x > pointX + offset && x < pointX + viewWidth - offset) {
                     if (y > pointY + offset && y < pointY + viewHeight - offset) {
                         if (touchPath[i][j] == 0) {
+                            if (lastP == null)
+                                lastP = new Point(i,j);
+                            //Log.d("*** Touch Grid ::: ","lp: "+lastP.x+" "+lastP.y+" i,j"+i+j);
+                            if (lastP.x-1 <= i && i <= lastP.x+1 && lastP.y-1 <= j && j <= lastP.y+1) {
+                                sq = (SquareTextView) findViewById(matrix[i][j]);
+                                letter = sq.getText().toString();
 
-                            sq = (SquareTextView) findViewById(matrix[i][j]);
-                            letter = sq.getText().toString();
+                                //highlight
+                                sq.setBackgroundColor(Color.RED);
 
-                            //highlight
-                            sq.setBackgroundColor(Color.RED);
-
-                            word = word + letter;
-                            letter_path = letter_path + i + j;
-                            wordIn.setText(word);
-                            //wordIn.setGravity(Gravity.LEFT);
+                                word = word + letter;
+                                letter_path = letter_path + i + j;
+                                wordIn.setText(word);
+                                //wordIn.setGravity(Gravity.LEFT);
 
 
-                            //un highlight
+                                //un highlight
 
-                            touchPath[i][j] = 1;
+                                touchPath[i][j] = 1;
+                                lastP = new Point(i,j);
+                            }
                         }
                     }
                 }
@@ -388,25 +382,20 @@ public class mpNewGame extends AppCompatActivity {
         }
     }
 
-    private void resetHighlight(){
+    private void touchRest(){
+        // clear touchPath
+        lastP = null;
         for(int i = 0; i < 4; ++i){
             for(int j = 0; j < 4; ++j){
+                touchPath[i][j] = 0;
                 sq = (SquareTextView) findViewById(matrix[i][j]);
                 sq.setBackgroundColor(Color.WHITE);
             }
         }
-    }
-
-    public void submit(){
-        // clear touchPath
-        for(int i = 0; i < 4; ++i){
-            for(int j = 0; j < 4; ++j){
-                touchPath[i][j] = 0;
-            }
-        }
         // clear word
         word = "";
-        //wordIn.setText("");
+        letter_path = "";
+        wordIn.setText("");
         //wordIn.append(" ");
         //resetHighlight();
     }
@@ -418,22 +407,17 @@ public class mpNewGame extends AppCompatActivity {
 
         switch (EA){
             case MotionEvent.ACTION_DOWN:
-                Log.d("*** DispatchTouch :: ","Action Down X:"+X+" Y:"+Y);
+                //Log.d("*** DispatchTouch :: ","Action Down X:"+X+" Y:"+Y);
                 track(X, Y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d("*** DispatchTouch :: ","Action Move X:"+X+" Y:"+Y);
+                //Log.d("*** DispatchTouch :: ","Action Move X:"+X+" Y:"+Y);
                 track(X, Y);
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.d("*** DispatchTouch :: ","Action up X:"+X+" Y:"+Y);
-                submit();
                 break;
         }
 
         return super.dispatchTouchEvent(event);
     }
-
 
     @Override
     public void onResume() {
@@ -472,10 +456,6 @@ public class mpNewGame extends AppCompatActivity {
 
         return score;
     }
-
-
-
-
 
     public static Intent newIntent(Context packageContext, String gameLevel, String playerType, String gameMode) {
         Intent i = new Intent( packageContext, mpNewGame.class);
@@ -747,9 +727,7 @@ public class mpNewGame extends AppCompatActivity {
                 } else
                     Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
             }
-            wordIn.setText("");
-            letter_path = "";
-            resetHighlight();
+            touchRest();
             mDatabaseReference.child("MultiGames").child("Player1Score").setValue(score);
 
 
@@ -812,9 +790,7 @@ public class mpNewGame extends AppCompatActivity {
                 } else
                     Toast.makeText(getApplicationContext(), "Wrong!", Toast.LENGTH_SHORT).show();
             }
-            wordIn.setText("");
-            letter_path = "";
-            resetHighlight();
+            touchRest();
             mDatabaseReference.child("MultiGames").child("Player2Score").setValue(score);
 
 
@@ -825,11 +801,7 @@ public class mpNewGame extends AppCompatActivity {
     View.OnClickListener clickOnCancelButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            wordIn.setText("");
-            letter_path ="";
-            resetHighlight();
-
+            touchRest();
         }
     };
 
