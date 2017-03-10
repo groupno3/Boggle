@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,7 +56,6 @@ public class mpNewGame extends AppCompatActivity {
 
     BoardCreator bc;
     String [][] board;
-    String level;
     String Level;
     String PlayerType;
     String Mode;
@@ -107,7 +105,6 @@ public class mpNewGame extends AppCompatActivity {
         Level = extras.getString("LEVEL");
         PlayerType = extras.getString("TYPE");
         Mode = extras.getString("MODE");
-        this.level = Level;
 
         SubmitButton = (Button) findViewById(R.id.submit_button);
         CancelButton =  (Button) findViewById(R.id.cancel_button);
@@ -223,9 +220,6 @@ public class mpNewGame extends AppCompatActivity {
         //gen board
         if(PlayerType.equals("HOST")) {
             Toast.makeText(getApplicationContext(), "Level: "+ Level + "Mode: "+ Mode, Toast.LENGTH_LONG).show();
-//            bc = new BoardCreator(dbHelper, level);
-//            String[] str = bc.getBoardLayout();
-//            generateBoard(str);
 
             SubmitButton.setOnClickListener(clickOnHostSubmitButton);
             CancelButton.setOnClickListener(clickOnCancelButton);
@@ -235,11 +229,10 @@ public class mpNewGame extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
-                    bc = new BoardCreator(dbHelper, level);
+                    bc = new BoardCreator(dbHelper, Level);
                     String[] str = bc.getBoardLayout();
                     generateBoard(str);
                     MultiPlayerBoard mpb = new MultiPlayerBoard(str, bc.getAllWordsInString());
-                    //mDatabaseReference.child("MultiGames").child("Boards").
                     MGI.Boards.add(0, mpb);
                     MGI.level = Level;
                     MGI.Mode=Mode;
@@ -323,7 +316,7 @@ public class mpNewGame extends AppCompatActivity {
                         AllWords = MGI.Boards.get(boardNum).AllWords;
                     } else {
                         // There isn't a next board so we make one.
-                        bc = new BoardCreator(dbHelper, level);
+                        bc = new BoardCreator(dbHelper, Level);
                         String[] str = bc.getBoardLayout();
                         AllWords = bc.getAllWordsInString();
                         generateBoard(str);
