@@ -46,6 +46,7 @@ public class mpNewGame extends AppCompatActivity {
     int offset;
     boolean player2TimerStarted = false;
     AlertDialog.Builder alertDialog;
+    AlertDialog.Builder alertDialog1;
     static boolean active = false;
 
     private TextView scoreView;
@@ -115,6 +116,9 @@ public class mpNewGame extends AppCompatActivity {
         alertDialog = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
         alertDialog.setTitle("GAME OVER!");
 
+        alertDialog1 = new AlertDialog.Builder(mpNewGame.this, R.style.MyAlertDialogStyle);
+
+
         dbHelper = new WordDBHelper(getApplicationContext());
         db = dbHelper.getWritableDatabase();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -171,6 +175,25 @@ public class mpNewGame extends AppCompatActivity {
         //Log.i("*** TAG :: ","gridY = "+ gridY);
         //start
 
+        mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
+
+                player1score = MGI.Player1Score;
+                player2score = MGI.Player2Score;
+
+                Toast.makeText(getApplicationContext(), "Listening to score", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         mDatabaseReference.child("MultiGames").child("CTMData").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -216,6 +239,7 @@ public class mpNewGame extends AppCompatActivity {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("Waiting for host to join...");
         alertDialog.create();
+        alertDialog1.create();
 
         //gen board
         if(PlayerType.equals("HOST")) {
@@ -499,7 +523,7 @@ public class mpNewGame extends AppCompatActivity {
 
         //start timer
         // TODO: create motion lock
-        new CountDownTimer(180000, 1000) {
+        new CountDownTimer(30000, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
@@ -508,6 +532,8 @@ public class mpNewGame extends AppCompatActivity {
             }
 
             public void onFinish() {
+
+
 
                 //TODO: Multi Round Modify this method to support Multi-rounds, should not break other modes
                 /*  If the timer finishes in Multi round, then that player has lost. and Only needs to set the lost condition
@@ -521,65 +547,10 @@ public class mpNewGame extends AppCompatActivity {
                     ...
                     display your score & losing message.
                  */
-                mDatabaseReference.child("MultiGames").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
-
-                        player1score = MGI.Player1Score;
-                        player2score = MGI.Player2Score;
-
-                        }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
 
                 timer.setText("Time's up!");
 
                 if(PlayerType.equals("HOST")) {
-                    if(player1score>player2score){
-                        //TODO: Minh, Display dialog to HOST that he won. Ex: Wohoo! You won! (with OK button which will close the button)
-                        //Toast.makeText(getApplicationContext(), "Player 1 won!", Toast.LENGTH_SHORT).show();
-
-                        alertDialog.setMessage("Congratulation! The host won!");
-                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-
-
-
-                    }
-                    if(player1score<player2score){
-                        //TODO: Minh, Display dialog to HOST that he lost. Ex: Oh no! You lost! player 2 won. (with OK button which will close the button)
-                        alertDialog.setMessage("Host lost! Better luck next time!");
-                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-
-
-
-                    }
-                    else{
-                        //TODO: Minh, Display dialog to HOST that it was a tie. Ex: Wow! It's a tie!. (with OK button which will close the button)
-                        alertDialog.setMessage("Wow! We have a tie");
-                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                dialog.dismiss();
-                            }
-                        });
-
-
-                    }
                     //then do this
                     if (scoreMultiDBHelper.isHighScore(score, Level)) {
                         alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
@@ -607,6 +578,41 @@ public class mpNewGame extends AppCompatActivity {
 
                     }
                     alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
+
+                    if(player1score>player2score){
+                        //TODO: Minh, Display dialog to HOST that he won. Ex: Wohoo! You won! (with OK button which will close the button)
+                        //Toast.makeText(getApplicationContext(), "Player 1 won!", Toast.LENGTH_SHORT).show();
+
+                        alertDialog1.setTitle("You Won!");
+                        alertDialog1.setMessage("Congratulations! You won!");
+                        alertDialog1.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+                    }
+
+                    if(player1score<player2score){
+                        //TODO: Minh, Display dialog to HOST that he lost. Ex: Oh no! You lost! player 2 won. (with OK button which will close the button)
+                        alertDialog1.setTitle("You Lost!");
+                        alertDialog1.setMessage("You lost! Better luck next time!");
+                        alertDialog1.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+                    }
+                    else{
+                        //TODO: Minh, Display dialog to HOST that it was a tie. Ex: Wow! It's a tie!. (with OK button which will close the button)
+                        alertDialog1.setTitle("It's a tie!");
+                        alertDialog1.setMessage("Wow! We have a tie");
+                        alertDialog1.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                dialog.dismiss();
+                            }
+                        }).show();
+                    }
                 }
                 else if(PlayerType.equals("JOIN")) {
 
