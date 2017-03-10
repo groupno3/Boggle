@@ -28,6 +28,8 @@
         <activity android:name=".JoinActivity"/>
         <activity android:name=".HighScore"/>
         <activity android:name=".MultiPlayerModes"/>
+        <activity android:name=".HighScoreSingle"/>
+        <activity android:name=".HighScoreMulti"/>
         <activity android:name=".PasscodeActivity">
         </activity>
     </application>
