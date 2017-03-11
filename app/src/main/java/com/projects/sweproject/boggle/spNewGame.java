@@ -43,6 +43,7 @@ public class spNewGame extends AppCompatActivity {
 
     int score = 0;
     int word_count = 0;
+    String foundWords = "";
 
     BoardCreator bc;
     String[][] board;
@@ -213,7 +214,7 @@ public class spNewGame extends AppCompatActivity {
                 else
                     alertDialog.setTitle("GAME OVER!");
 
-                alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
+                alertDialog.setMessage("You found the following words:\n" + foundWords + "\n\nThe valid words in this board are:\n\n" + bc.getAllWordsInString());
 
                 alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -376,6 +377,7 @@ public class spNewGame extends AppCompatActivity {
                         selected_words.add(letter_path);
                         word_count++;
                         scoreView.setText("Your Score: " + calculateScore(input));
+                        foundWords+= input + " ";
                     } else {
                         Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
                     }
