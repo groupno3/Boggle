@@ -99,7 +99,7 @@ public class mpNewGame extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sp_game_layout);
+        setContentView(R.layout.mp_game_layout);
 
         //get selected level
         Bundle extras = getIntent().getExtras();
@@ -262,7 +262,7 @@ public class mpNewGame extends AppCompatActivity {
                     MGI.Mode=Mode;
                     MGI.BoardStarted=true;
                     mDatabaseReference.child("MultiGames").setValue(MGI);
-                    startTimer();
+                    startTimer(180000);
                 }
 
                 @Override
@@ -301,7 +301,7 @@ public class mpNewGame extends AppCompatActivity {
                         if(!player2TimerStarted)
                         {
                             player2TimerStarted =true;
-                            startTimer();
+                            startTimer(180000);
                         }
                     }
                 }
@@ -519,11 +519,11 @@ public class mpNewGame extends AppCompatActivity {
     }
     */
 
-    public void startTimer(){
+    public void startTimer(int time){
 
         //start timer
         // TODO: create motion lock
-        new CountDownTimer(30000, 1000) {
+        new CountDownTimer(time, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
