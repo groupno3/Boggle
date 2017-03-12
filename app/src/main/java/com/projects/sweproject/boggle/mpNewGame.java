@@ -419,7 +419,7 @@ public class mpNewGame extends AppCompatActivity {
         // do something on back.
         active = false;
         Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
 
@@ -772,7 +772,7 @@ public class mpNewGame extends AppCompatActivity {
                 // User clicked OK button
                 //quit go back to Mainacitivyt
                 Intent intent = new Intent(mpNewGame.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         }).show();
