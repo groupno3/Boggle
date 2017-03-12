@@ -69,6 +69,7 @@ public class mpNewGame extends AppCompatActivity {
     private String letter, word,letter_path="";
     private Boolean isPlayer2In;
     private String AllWords ="";
+    private  String foundWords = "";
 
     private ArrayList<String> selected_words;
     // The following are used for the shake detection
@@ -496,29 +497,29 @@ public class mpNewGame extends AppCompatActivity {
                 if (PlayerType.equals("HOST")) {
                     if (Mode.equals("ROUNDS")) {
                         mDatabaseReference.child("MultiGames").child("IsPlayer1Lost").setValue(true);
-                        showDialog("HOST","You Lost!", "You lost! Better luck next time.",false);
+                        showDialog("HOST","You Lost!", "You lost! Better luck next time.", true);
                     }
                     else {
                         if (player1score > player2score)
                             showDialog("HOST","You won!","Congratulations! You won!",true);
                         else if (player1score < player2score)
-                            showDialog("HOST","You Lost!", "You lost! Better luck next time.",false);
+                            showDialog("HOST","You Lost!", "You lost! Better luck next time.", true);
                         else
-                            showDialog("HOST","It's a tie!", "No one won! It's a tie.",false);
+                            showDialog("HOST","It's a tie!", "No one won! It's a tie.", true);
                     }
                 }
                 if (PlayerType.equals("JOIN")) {
                     if (Mode.equals("ROUNDS")) {
                         mDatabaseReference.child("MultiGames").child("IsPlayer2Lost").setValue(true);
-                        showDialog("JOIN", "You Lost!", "You lost! Better luck next time.", false);
+                        showDialog("JOIN", "You Lost!", "You lost! Better luck next time.", true);
                     }
                     else {
                         if (player2score > player1score)
                             showDialog("JOIN","You won!","Congratulations! You won!",true);
                         else if (player2score < player1score)
-                            showDialog("JOIN","You Lost!", "You lost! Better luck next time.",false);
+                            showDialog("JOIN","You Lost!", "You lost! Better luck next time.", true);
                         else
-                            showDialog("JOIN","It's a tie!", "No one won! It's a tie.",false);
+                            showDialog("JOIN","It's a tie!", "No one won! It's a tie.",true);
 
                     }
                 }
@@ -560,6 +561,7 @@ public class mpNewGame extends AppCompatActivity {
                                 Player1ListCount++;
                                 Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
                                 selected_words.add(letter_path);
+                                foundWords+= input + " ";
                                 word_count++;
                                 scoreView.setText("Your Score: " + calculateScore(input));
 
@@ -588,6 +590,7 @@ public class mpNewGame extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
                             selected_words.add(letter_path);
                             word_count++;
+                            foundWords+= input + " ";
                             scoreView.setText("Your Score: " + calculateScore(input));
                         } else {
                             Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
@@ -636,6 +639,7 @@ public class mpNewGame extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
                                 selected_words.add(letter_path);
                                 word_count++;
+                                foundWords+= input + " ";
                                 scoreView.setText("Your Score: " + calculateScore(input));
 
                             }
@@ -654,6 +658,7 @@ public class mpNewGame extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
                             selected_words.add(letter_path);
                             word_count++;
+                            foundWords+= input + " ";
                             scoreView.setText("Your Score: " + calculateScore(input));
                         } else {
                             Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
@@ -763,9 +768,9 @@ public class mpNewGame extends AppCompatActivity {
 
         }
         if(PlayerType.equals("HOST"))
-            alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
+            alertDialog.setMessage("You found the following words:\n" + foundWords + "\n\nThe valid words in this board are:\n\n" + bc.getAllWordsInString());
         else
-            alertDialog.setMessage("The valid words in this board are:\n\n" + AllWords);
+            alertDialog.setMessage("You found the following words:\n" + foundWords + "\n\nThe valid words in this board are:\n\n" + AllWords);
 
         alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
