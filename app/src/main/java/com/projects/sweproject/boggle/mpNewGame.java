@@ -254,9 +254,6 @@ public class mpNewGame extends AppCompatActivity {
 
         SubmitRound.setOnClickListener(clickOnSubmitRound);
 
-        if(!Mode.equals("ROUNDS"))
-            SubmitRound.setVisibility(View.INVISIBLE);
-
         //gen board
         if(PlayerType.equals("HOST")) {
 
@@ -298,7 +295,7 @@ public class mpNewGame extends AppCompatActivity {
             isPlayer2In = false;
             mProgressDialog.show();
 
-            Toast.makeText(getApplicationContext(), "MODE: "+ PlayerType, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "MODE: " + PlayerType, Toast.LENGTH_LONG).show();
 
             mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
                 @Override
@@ -306,7 +303,7 @@ public class mpNewGame extends AppCompatActivity {
 
                     MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
 
-                    if(MGI.BoardStarted&&isPlayer2In==false){
+                    if (MGI.BoardStarted && isPlayer2In == false) {
 
                         String[] board = new String[MGI.Boards.get(0).BoardList.size()];
                         board = MGI.Boards.get(0).BoardList.toArray(board);
@@ -315,10 +312,9 @@ public class mpNewGame extends AppCompatActivity {
                         AllWords = MGI.Boards.get(0).AllWords;
                         Mode = MGI.Mode;
                         mProgressDialog.dismiss();
-                        isPlayer2In=true;
-                        if(!player2TimerStarted)
-                        {
-                            player2TimerStarted =true;
+                        isPlayer2In = true;
+                        if (!player2TimerStarted) {
+                            player2TimerStarted = true;
                             startTimer(60000);
                         }
                     }
@@ -331,8 +327,6 @@ public class mpNewGame extends AppCompatActivity {
             });
 
         }
-
-
     }
 
     private void track(int x, int y) {
@@ -474,6 +468,9 @@ public class mpNewGame extends AppCompatActivity {
 
 
     public void startTimer(long time){
+
+        if(!Mode.equals("ROUNDS"))
+            SubmitRound.setVisibility(View.INVISIBLE);
 
         Timer = new CountDownTimer(time, 1000) {
 
