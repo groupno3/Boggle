@@ -340,8 +340,11 @@ public class spNewGame extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // do something on back.
-        super.onBackPressed();
+        //go back to main menu and clear the activities on the stack.
         active = false;
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     public int calculateScore(String word) {
@@ -403,5 +406,10 @@ public class spNewGame extends AppCompatActivity {
         i.putExtra("LEVEL", gameLevel);
         return i;
     }
+
+
+
+
+
 
 }

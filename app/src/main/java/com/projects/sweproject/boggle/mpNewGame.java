@@ -417,8 +417,10 @@ public class mpNewGame extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // do something on back.
-        super.onBackPressed();
         active = false;
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     public int calculateScore(String word){
@@ -801,6 +803,7 @@ public class mpNewGame extends AppCompatActivity {
             }
         }).show();
     }
+
 
 
 
