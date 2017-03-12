@@ -34,6 +34,7 @@ public class SinglePlayerLevels extends Activity {
                 Mode = "SinglePlayer";
                 Level = "Easy";
                 Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, null, Mode, Level);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
             }
         });
@@ -44,6 +45,7 @@ public class SinglePlayerLevels extends Activity {
                 Mode = "SinglePlayer";
                 Level = "Medium";
                 Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, null, Mode, Level);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
             }
         });
@@ -54,6 +56,7 @@ public class SinglePlayerLevels extends Activity {
                 Mode = "SinglePlayer";
                 Level = "Hard";
                 Intent in = ShakeActivity.newIntent(SinglePlayerLevels.this, null, Mode, Level);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
             }
         });

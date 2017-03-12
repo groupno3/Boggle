@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent singlePlayerScreen = new Intent(MainActivity.this, SinglePlayerLevels.class);
+                singlePlayerScreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(singlePlayerScreen);
             }
         });
@@ -35,6 +36,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent multiPlayerScreen = new Intent(MainActivity.this, MultiPlayerTypeActivity.class);
+                multiPlayerScreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(multiPlayerScreen);
             }
         });
@@ -45,6 +47,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent highScoreScreen = new Intent(MainActivity.this, HighScore.class);
+                highScoreScreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(highScoreScreen);
             }
         });

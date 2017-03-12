@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -93,13 +94,22 @@ public class mpNewGame extends AppCompatActivity {
     private int player1score;
     private int player2score;
 
+    private MultiGameInfo MGI;
+
+
+
+    private Button SubmitRound;
+    private long TimeLeft;
+
+    CountDownTimer Timer;
+
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sp_game_layout);
+        setContentView(R.layout.mp_game_layout);
 
         //get selected level
         Bundle extras = getIntent().getExtras();
@@ -109,6 +119,9 @@ public class mpNewGame extends AppCompatActivity {
 
         SubmitButton = (Button) findViewById(R.id.submit_button);
         CancelButton =  (Button) findViewById(R.id.cancel_button);
+        SubmitRound = (Button) findViewById(R.id.SubmitRound_button);
+
+        MGI = new MultiGameInfo();
 
         scoreMultiDBHelper = new HighScoreMultiPlayerDBHelper(getApplicationContext());
         scoreMultiDb = scoreMultiDBHelper.getWritableDatabase();
@@ -179,12 +192,9 @@ public class mpNewGame extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
-
+                MGI = dataSnapshot.getValue(MultiGameInfo.class);
                 player1score = MGI.Player1Score;
                 player2score = MGI.Player2Score;
-
-                Toast.makeText(getApplicationContext(), "Listening to score", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -241,9 +251,12 @@ public class mpNewGame extends AppCompatActivity {
         alertDialog.create();
         alertDialog1.create();
 
+        SubmitRound.setOnClickListener(clickOnSubmitRound);
+
         //gen board
         if(PlayerType.equals("HOST")) {
-            Toast.makeText(getApplicationContext(), "Level: "+ Level + "Mode: "+ Mode, Toast.LENGTH_LONG).show();
+
+            Toast.makeText(getApplicationContext(), "Level: "+ Level + "\nMode: "+ Mode, Toast.LENGTH_LONG).show();
 
             SubmitButton.setOnClickListener(clickOnHostSubmitButton);
             CancelButton.setOnClickListener(clickOnCancelButton);
@@ -262,7 +275,7 @@ public class mpNewGame extends AppCompatActivity {
                     MGI.Mode=Mode;
                     MGI.BoardStarted=true;
                     mDatabaseReference.child("MultiGames").setValue(MGI);
-                    startTimer();
+                    startTimer(60000);
                 }
 
                 @Override
@@ -289,7 +302,7 @@ public class mpNewGame extends AppCompatActivity {
 
                     MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
 
-                    if(MGI.BoardStarted){
+                    if(MGI.BoardStarted&&isPlayer2In==false){
 
                         String[] board = new String[MGI.Boards.get(0).BoardList.size()];
                         board = MGI.Boards.get(0).BoardList.toArray(board);
@@ -298,10 +311,11 @@ public class mpNewGame extends AppCompatActivity {
                         AllWords = MGI.Boards.get(0).AllWords;
                         Mode = MGI.Mode;
                         mProgressDialog.dismiss();
+                        isPlayer2In=true;
                         if(!player2TimerStarted)
                         {
                             player2TimerStarted =true;
-                            startTimer();
+                            startTimer(60000);
                         }
                     }
                 }
@@ -311,61 +325,11 @@ public class mpNewGame extends AppCompatActivity {
 
                 }
             });
+
         }
+
+
     }
-
-    // TODO: multi rounds
-    // This is called when the player taps "submit Round"
-    // You check if the player has submitted 5 words.
-    // Then try to get the next board in the Boards array on FB.
-    // if it doesn't exist you Gen a new one, if there is one you get it.
-    // After the board is setup you add the players current time to the new two minutes.
-    //
-    /*
-    private void submitRound(View view){
-        // check words.
-        if(selected_words.size()>=5) {
-            mDatabaseReference.child("MultiGames").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
-                    // check lose condition
-                    // Get next board
-                    boardNum++;
-                    if(MGI.Boards.size()>=boardNum){
-                        // Board exists so we get it from DB.
-                        String[] board = new String[MGI.Boards.get(boardNum).BoardList.size()];
-                        board = MGI.Boards.get(boardNum).BoardList.toArray(board);
-                        generateBoard(board);
-                        AllWords = MGI.Boards.get(boardNum).AllWords;
-                    } else {
-                        // There isn't a next board so we make one.
-                        bc = new BoardCreator(dbHelper, Level);
-                        String[] str = bc.getBoardLayout();
-                        AllWords = bc.getAllWordsInString();
-                        generateBoard(str);
-                        MultiPlayerBoard mpb = new MultiPlayerBoard(str, AllWords);
-                        MGI.Boards.add(boardNum, mpb);
-
-                        // Set new board
-                        // TODO: Multi Round This is most likely wrong.
-                        mDatabaseReference.child("MultiGames").child("Boards").setValue(MGI.Boards);
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            // sync time + points
-            // start.
-            //startTimer(oldtime);
-        } // else 'Not Enough words'
-    }
-    */
 
     private void track(int x, int y) {
         int pointX;
@@ -502,198 +466,65 @@ public class mpNewGame extends AppCompatActivity {
         }
     }
 
-    // TODO:: Multi Rounds timer
-    /*  If the timer finishes in Multi round, then that player has lost. and Only needs to set the lost condition
-                    in FireBase.
-                    if mode == "rounds"
-                    firebase -> set lose condition for that player to true (a bool)
-                    if host
-                        firebase set -> player1lose == true;
-                    else if join
-                        firebase set -> player2lose == true;
-                    ...
-                    display your score & losing message.
 
-    public void startTimer(int time){
+    public void startTimer(long time){
 
-    }
-    */
-
-    public void startTimer(){
-
-        //start timer
-        // TODO: create motion lock
-        new CountDownTimer(30000, 1000) {
+        Timer = new CountDownTimer(time, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
                 timer.setText("Time left: " + ((millisUntilFinished/1000)/60)  + ":"+ ((String.format("%02d", (millisUntilFinished/1000)%60))));
+                TimeLeft = millisUntilFinished;
 
+
+                if (Mode.equals("ROUNDS")&&PlayerType.equals("HOST")&&MGI.IsPlayer2Lost==true) {
+                    Timer.cancel();
+                    timer.setText("You won!");
+                    showDialog("HOST","You won!","Congratulations! You won!",true);
+                }
+
+                if (Mode.equals("ROUNDS")&&PlayerType.equals("JOIN")&&MGI.IsPlayer1Lost==true){
+                    Timer.cancel();
+                    timer.setText("You won!");
+                    showDialog("JOIN","You won!","Congratulations! You won!",true);
+                }
             }
 
             public void onFinish() {
-
-
-
-                //TODO: Multi Round Modify this method to support Multi-rounds, should not break other modes
-                /*  If the timer finishes in Multi round, then that player has lost. and Only needs to set the lost condition
-                    in FireBase.
-                    if mode == "rounds"
-                    firebase -> set lose condition for that player to true (a bool)
-                    if host
-                        firebase set -> player1lose == true;
-                    else if join
-                        firebase set -> player2lose == true;
-                    ...
-                    display your score & losing message.
-                 */
-
-                timer.setText("Time's up!");
-
-                if(PlayerType.equals("HOST")) {
-                    //then do this
-                    if (scoreMultiDBHelper.isHighScore(score, Level)) {
-                        alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
-                        final EditText highScoreName = new EditText(mpNewGame.this);
-                        highScoreName.setHint("Please enter your name:");
-                        alertDialog.setView(highScoreName);
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                        alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User clicked OK button
-                                //quit go back to Mainacitivyt
-                                String name = highScoreName.getText().toString();
-                                ContentValues vals = new ContentValues();
-                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_PLAYER, name);
-                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_SCORE, score);
-                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, Level);
-                                scoreMultiDb.insert(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.TABLE_NAME, null, vals);
-                                closeKeyBoard();
-                                Intent intent = new Intent(mpNewGame.this, MainActivity.class);
-                                startActivity(intent);
-
-                            }
-                        });
-
+                if (PlayerType.equals("HOST")) {
+                    if (Mode.equals("ROUNDS")) {
+                        mDatabaseReference.child("MultiGames").child("IsPlayer1Lost").setValue(true);
+                        showDialog("HOST","You Lost!", "You lost! Better luck next time.",false);
                     }
-                    alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
-
-                    if(player1score>player2score){
-                        //TODO: Minh, Display dialog to HOST that he won. Ex: Wohoo! You won! (with OK button which will close the button)
-                        //Toast.makeText(getApplicationContext(), "Player 1 won!", Toast.LENGTH_SHORT).show();
-
-                        alertDialog1.setTitle("You Won!");
-                        alertDialog1.setMessage("Congratulations! You won!");
-                        alertDialog1.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-                    }
-
-                    if(player1score<player2score){
-                        //TODO: Minh, Display dialog to HOST that he lost. Ex: Oh no! You lost! player 2 won. (with OK button which will close the button)
-                        alertDialog1.setTitle("You Lost!");
-                        alertDialog1.setMessage("You lost! Better luck next time!");
-                        alertDialog1.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-                    }
-                    else{
-                        //TODO: Minh, Display dialog to HOST that it was a tie. Ex: Wow! It's a tie!. (with OK button which will close the button)
-                        alertDialog1.setTitle("It's a tie!");
-                        alertDialog1.setMessage("Wow! We have a tie");
-                        alertDialog1.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                dialog.dismiss();
-                            }
-                        }).show();
+                    else {
+                        if (player1score > player2score)
+                            showDialog("HOST","You won!","Congratulations! You won!",true);
+                        else if (player1score < player2score)
+                            showDialog("HOST","You Lost!", "You lost! Better luck next time.",false);
+                        else
+                            showDialog("HOST","It's a tie!", "No one won! It's a tie.",false);
                     }
                 }
-                else if(PlayerType.equals("JOIN")) {
-
-                    if(player2score>player1score){
-                        //TODO: Minh, Display dialog to JOIN that he won. Ex: Wohoo! You won! (with OK button which will close the button)
-                       // Toast.makeText(getApplicationContext(), "Player 2 won!", Toast.LENGTH_SHORT).show();
-                        alertDialog.setMessage("Congratulation! Player 2 won!");
-                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
+                if (PlayerType.equals("JOIN")) {
+                    if (Mode.equals("ROUNDS")) {
+                        mDatabaseReference.child("MultiGames").child("IsPlayer2Lost").setValue(true);
+                        showDialog("JOIN", "You Lost!", "You lost! Better luck next time.", false);
+                    }
+                    else {
+                        if (player2score > player1score)
+                            showDialog("JOIN","You won!","Congratulations! You won!",true);
+                        else if (player2score < player1score)
+                            showDialog("JOIN","You Lost!", "You lost! Better luck next time.",false);
+                        else
+                            showDialog("JOIN","It's a tie!", "No one won! It's a tie.",false);
 
                     }
-                    if(player2score<player1score){
-                        //TODO: Minh, Display dialog to JOIN that he lost. Ex: Oh no! You lost! player 1 won. (with OK button which will close the button)
-
-                        alertDialog.setMessage("Sorry, You lost! Player 1 won. Better luck next time!");
-                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-
-
-                    }
-                    else{
-                        //TODO: Minh, Display dialog to HOST that it was a tie. Ex: Wow! It's a tie!. (with OK button which will close the button)
-                        alertDialog.setMessage("Wow! We have a tie!");
-                        alertDialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-
-
-                    }
-
-                    if (scoreMultiDBHelper.isHighScore(score, Level)) {
-                        alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
-                        final EditText highScoreName = new EditText(mpNewGame.this);
-                        highScoreName.setHint("Please enter your name:");
-                        alertDialog.setView(highScoreName);
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                        alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User clicked OK button
-                                //quit go back to Mainacitivyt
-                                String name = highScoreName.getText().toString();
-                                ContentValues vals = new ContentValues();
-                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_PLAYER, name);
-                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_SCORE, score);
-                                vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, Level);
-                                scoreMultiDb.insert(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.TABLE_NAME, null, vals);
-                                closeKeyBoard();
-                                Intent intent = new Intent(mpNewGame.this, MainActivity.class);
-                                startActivity(intent);
-
-                            }
-                        });
-                    }
-                    alertDialog.setMessage("The valid words in this board are:\n\n" + AllWords);
                 }
-                alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK button
-                        //quit go back to Mainacitivyt
-                        Intent intent = new Intent(mpNewGame.this, SinglePlayerLevels.class);
-                        startActivity(intent);
-
-                    }
-                });
-                if(active)
-                    alertDialog.show();
-                SubmitButton.setEnabled(false);
-                CancelButton.setEnabled(false);
             }
         }.start();
-
     }
+
+
 
     public void closeKeyBoard(){
 
@@ -737,9 +568,19 @@ public class mpNewGame extends AppCompatActivity {
                         else
                             Toast.makeText(getApplicationContext(), "you have already selected this word!", Toast.LENGTH_SHORT).show();
                     }
+
                     //Cut-throat mode for HOST ends here
                     //Basic mode for HOST starts here
                     else {
+
+                        if (Mode.equals("ROUNDS")){
+
+                            if(MGI.IsPlayer2Lost==true){
+
+                                Toast.makeText(getApplicationContext(), "You Win!", Toast.LENGTH_SHORT);
+                            }
+                        }
+
                         if (selected_words.contains(letter_path) == false) {
 
                             Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
@@ -769,6 +610,8 @@ public class mpNewGame extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
+
+            Toast.makeText(mpNewGame.this, "Type: " +PlayerType, Toast.LENGTH_SHORT).show();
             final String input = wordIn.getText().toString();
 
             if(input.length()<3){
@@ -835,5 +678,130 @@ public class mpNewGame extends AppCompatActivity {
             touchRest();
         }
     };
+
+    // TODO: Multi Rounds, Round Submit function.
+    // This is called when the player taps "submit Round"
+    // You check if the player has submitted 5 words.
+    // Then try to get the next board in the Boards array on FB.
+    // if it doesn't exist you Gen a new one, if there is one you get it.
+    // After the board is setup you add the players current time to the new two minutes.
+
+    View.OnClickListener clickOnSubmitRound = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            if (selected_words.size()>1){
+
+                boardNum++;
+                Log.i("Board*******: ", "Board Size: "+ MGI.Boards.size());
+                //get new board from firebase if it's there
+                if ((MGI.Boards.size()-1)>=boardNum){
+                    Log.i("Board*******: ", "Getting a board from firebase");
+                    String[] board = new String[16];
+                    board = MGI.Boards.get(boardNum).BoardList.toArray(board);
+                    AllWords=MGI.Boards.get(boardNum).AllWords;
+                    generateBoard(board);
+                }
+
+                else{
+
+                    Log.i("Board*******: ", "Creating a new board");
+
+                    bc = new BoardCreator(dbHelper, Level);
+                    String[] str = bc.getBoardLayout();
+                    AllWords = bc.getAllWordsInString();
+                    generateBoard(str);
+
+                    MultiPlayerBoard MPB = new MultiPlayerBoard(str, AllWords);
+                    MGI.Boards.add(MPB);
+                    mDatabaseReference.child("MultiGames").child("Boards").setValue(MGI.Boards);
+                }
+
+                if(Timer != null) {
+                    Timer.cancel();
+                    Timer = null;
+                }
+                selected_words = new ArrayList();
+                startTimer((score*1000)+TimeLeft);
+
+            }
+            else
+                Toast.makeText(getApplicationContext(), "You must identify at least 5 words to go to next the round!", Toast.LENGTH_SHORT).show();
+
+
+
+        }
+    };
+
+    public void showScore(String PlayerType){
+        if (scoreMultiDBHelper.isHighScore(score, Level)) {
+            alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
+            final EditText highScoreName = new EditText(mpNewGame.this);
+            highScoreName.setHint("Please enter your name:");
+            alertDialog.setView(highScoreName);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                    //quit go back to Mainacitivyt
+                    String name = highScoreName.getText().toString();
+                    ContentValues vals = new ContentValues();
+                    vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_PLAYER, name);
+                    vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_SCORE, score);
+                    vals.put(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.COLUMN_NAME_LEVEL, Level);
+                    scoreMultiDb.insert(HighScoreMultiPlayerReaderContract.HighScoreMultiEntry.TABLE_NAME, null, vals);
+                    closeKeyBoard();
+                    Intent intent = new Intent(mpNewGame.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+
+                }
+            });
+
+        }
+        if(PlayerType.equals("HOST"))
+            alertDialog.setMessage("The valid words in this board are:\n\n" + bc.getAllWordsInString());
+        else
+            alertDialog.setMessage("The valid words in this board are:\n\n" + AllWords);
+
+        alertDialog.setPositiveButton("BACK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                //quit go back to Mainacitivyt
+                Intent intent = new Intent(mpNewGame.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        }).show();
+
+    }
+
+    public void showDialog(final String PlayerType, final String title, final String Message, final boolean displayHighScore){
+
+
+        timer.setText(title);
+        alertDialog1.setTitle(title);
+        alertDialog1.setMessage(Message);
+        alertDialog1.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                SubmitButton.setEnabled(false);
+                CancelButton.setEnabled(false);
+                SubmitRound.setEnabled(false);
+                dialog.dismiss();
+                if(displayHighScore)
+                    showScore(PlayerType);
+                else{
+                    Intent intent = new Intent(mpNewGame.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+
+
+            }
+        }).show();
+    }
+
+
 
 }

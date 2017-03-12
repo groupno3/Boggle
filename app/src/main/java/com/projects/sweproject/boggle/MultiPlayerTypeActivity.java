@@ -30,6 +30,7 @@ public class MultiPlayerTypeActivity extends Activity {
                 PlayerType = "HOST";
 
                 Intent in = new Intent(getApplicationContext(),PasscodeActivity.class);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
             }
         });
@@ -40,6 +41,7 @@ public class MultiPlayerTypeActivity extends Activity {
             public void onClick(View v) {
 
                 Intent in = new Intent(getApplicationContext(),JoinActivity.class);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
 
             }

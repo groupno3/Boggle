@@ -204,6 +204,7 @@ public class spNewGame extends AppCompatActivity {
                             vals.put(HighScoreReaderContract.HighScoreEntry.COLUMN_NAME_LEVEL, level);
                             scoreDB.insert(HighScoreReaderContract.HighScoreEntry.TABLE_NAME, null, vals);
                             Intent intent = new Intent(spNewGame.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
 
                         }
@@ -221,6 +222,7 @@ public class spNewGame extends AppCompatActivity {
                         // User clicked OK button
                         //quit go back to Main activity
                         Intent intent = new Intent(spNewGame.this, SinglePlayerLevels.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
 
                     }

@@ -35,10 +35,10 @@ public class PasscodeActivity extends AppCompatActivity {
                Boolean MGI = (boolean) dataSnapshot.getValue();
 
                 if(MGI){
-                    //TODO: Add message to inform player 2 joined
                     Toast.makeText(getApplicationContext(),"Player 2 joined",Toast.LENGTH_SHORT).show();
                     mDatabaseReference.removeEventListener(this);
                     Intent in = new Intent(getApplicationContext(), MultiPlayerModes.class);
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
 
@@ -57,7 +57,7 @@ public class PasscodeActivity extends AppCompatActivity {
         mDatabaseReference.child("MultiGames").setValue(newGame);
 
         t1 = (TextView) findViewById(R.id.textView2);
-        t1.setText("Game Passcode: \n" +passcode +"\n\n Waiting for player 2... ");
+        t1.setText(passcode);
         mDatabaseReference.child("MultiGames").child("Player2Joined").addValueEventListener(VE);
 
 

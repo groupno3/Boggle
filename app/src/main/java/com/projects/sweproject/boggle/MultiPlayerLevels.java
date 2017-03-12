@@ -41,6 +41,7 @@ public class MultiPlayerLevels extends Activity {
 
                 Level = "Easy";
                 Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
             }
         });
@@ -50,6 +51,7 @@ public class MultiPlayerLevels extends Activity {
             public void onClick(View v) {
                 Level = "Medium";
                 Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
             }
         });
@@ -59,6 +61,7 @@ public class MultiPlayerLevels extends Activity {
             public void onClick(View v) {
                 Level = "Hard";
                 Intent in = ShakeActivity.newIntent(MultiPlayerLevels.this, PlayerType, PlayerMode, Level);
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
             }
         });
@@ -66,6 +69,7 @@ public class MultiPlayerLevels extends Activity {
 
     public static Intent newIntent(Context packageContext, String PlayerType, String GameMode) {
         Intent i = new Intent( packageContext, MultiPlayerLevels.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.putExtra("TYPE",PlayerType);
         i.putExtra("MODE",GameMode);
         return i;

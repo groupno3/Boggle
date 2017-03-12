@@ -20,6 +20,10 @@ public class MultiGameInfo {
     public ArrayList<MultiPlayerBoard> Boards;
     public CutThroatMode CTMData;
 
+    public boolean IsPlayer1Lost;
+    public boolean IsPlayer2Lost;
+
+
 
 
     public MultiGameInfo(){
@@ -34,6 +38,9 @@ public class MultiGameInfo {
         level ="";
         Player1Score=0;
         Player2Score=0;
+
+        IsPlayer1Lost = false;
+        IsPlayer2Lost = false;
 
         Mode="";
 
