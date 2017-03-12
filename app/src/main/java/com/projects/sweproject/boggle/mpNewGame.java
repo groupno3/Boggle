@@ -254,6 +254,9 @@ public class mpNewGame extends AppCompatActivity {
 
         SubmitRound.setOnClickListener(clickOnSubmitRound);
 
+        if(!Mode.equals("ROUNDS"))
+            SubmitRound.setVisibility(View.INVISIBLE);
+
         //gen board
         if(PlayerType.equals("HOST")) {
 
