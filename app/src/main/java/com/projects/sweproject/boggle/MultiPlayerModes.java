@@ -31,6 +31,7 @@ public class MultiPlayerModes extends Activity {
             public void onClick(View v) {
 
                 Intent in = MultiPlayerLevels.newIntent(MultiPlayerModes.this,"HOST", "BASIC");
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
 
 
@@ -43,6 +44,7 @@ public class MultiPlayerModes extends Activity {
             public void onClick(View v) {
 
                 Intent in = MultiPlayerLevels.newIntent(MultiPlayerModes.this,"HOST", "CUTTHROAT");
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
 
             }
@@ -55,6 +57,7 @@ public class MultiPlayerModes extends Activity {
             public void onClick(View v) {
 
                 Intent in = MultiPlayerLevels.newIntent(MultiPlayerModes.this,"HOST", "ROUNDS");
+                in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(in);
 
             }

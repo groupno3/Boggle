@@ -56,22 +56,26 @@ public class ShakeActivity extends Activity {
                 if(Mode.equals("SinglePlayer")) {
                     System.out.println("SHAKE count " + count);
                     Intent in = spNewGame.newIntent(ShakeActivity.this, Level);
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
 
                 else if(Mode.equals("BASIC")) {
                     System.out.println("SHAKE count " + count);
                     Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType, "BASIC");
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
                 else if(Mode.equals("CUTTHROAT")) {
                     System.out.println("SHAKE count " + count);
                     Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType, "CUTTHROAT");
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
                 else if(Mode.equals("ROUNDS")) {
                     System.out.println("SHAKE count " + count);
                     Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType,"ROUNDS");
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
 
@@ -89,22 +93,26 @@ public class ShakeActivity extends Activity {
                 if(Mode.equals("SinglePlayer")) {
                     //System.out.println("SHAKE count " + count);
                     Intent in = spNewGame.newIntent(ShakeActivity.this, Level);
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
 
                 else if(Mode.equals("BASIC")) {
                    // System.out.println("SHAKE count " + count);
                     Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType, "BASIC");
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
                 else if(Mode.equals("CUTTHROAT")) {
                     //System.out.println("SHAKE count " + count);
                     Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType, "CUTTHROAT");
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
                 else if(Mode.equals("ROUNDS")) {
                     //System.out.println("SHAKE count " + count);
                     Intent in = mpNewGame.newIntent(ShakeActivity.this, Level, PlayerType, "ROUNDS");
+                    in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
                 }
 

@@ -60,6 +60,7 @@ public class JoinActivity extends Activity {
                             //mDatabaseReference.child("Board").child("BoardStarted").setValue(true);
                             mDatabaseReference.child("MultiGames").child("Player2Joined").setValue(true);
                             Intent in = mpNewGame.newIntent(getApplicationContext(), null, PlayerType,null);
+                            in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(in);
                         }
                         else
@@ -76,6 +77,7 @@ public class JoinActivity extends Activity {
     ValueEventListener VE = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
+
 
             MultiGameInfo MGI = dataSnapshot.getValue(MultiGameInfo.class);
             isGameOn= MGI.BoardStarted;
