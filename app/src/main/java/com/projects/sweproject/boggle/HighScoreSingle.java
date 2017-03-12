@@ -21,7 +21,7 @@ public class HighScoreSingle extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    setContentView(R.layout.highscore_single);
+    setContentView(R.layout.highscore_screen);
 
 
     HighScoreDBHelper scoreDBHelper = new HighScoreDBHelper(getApplicationContext());
