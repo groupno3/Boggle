@@ -189,10 +189,7 @@ public class spNewGame extends AppCompatActivity {
                     final EditText highScoreName = new EditText(spNewGame.this);
                     highScoreName.setHint("Please enter your name:");
                     alertDialog.setView(highScoreName);
-                    /*
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                    */
+
                     alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             // User clicked OK button
@@ -222,7 +219,7 @@ public class spNewGame extends AppCompatActivity {
                         // User clicked OK button
                         //quit go back to Main activity
                         Intent intent = new Intent(spNewGame.this, SinglePlayerLevels.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
 
                     }
@@ -343,7 +340,7 @@ public class spNewGame extends AppCompatActivity {
         //go back to main menu and clear the activities on the stack.
         active = false;
         Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
 
