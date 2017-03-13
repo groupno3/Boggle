@@ -40,6 +40,7 @@ public class PasscodeActivity extends AppCompatActivity {
                     Intent in = new Intent(getApplicationContext(), MultiPlayerModes.class);
                     in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
+                    finish();
                 }
 
             }

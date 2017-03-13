@@ -762,7 +762,7 @@ public class mpNewGame extends AppCompatActivity {
                     Intent intent = new Intent(mpNewGame.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-
+                    finish();
                 }
             });
 
