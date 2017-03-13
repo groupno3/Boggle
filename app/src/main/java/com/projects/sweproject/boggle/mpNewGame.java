@@ -765,6 +765,7 @@ public class mpNewGame extends AppCompatActivity {
                     MultiGameInfo MGI = new MultiGameInfo();
                     mDatabaseReference.child("MultiGames").setValue(MGI);
                     finish();
+                    System.exit(0);
                 }
             });
 
@@ -781,9 +782,8 @@ public class mpNewGame extends AppCompatActivity {
                 Intent intent = new Intent(mpNewGame.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                MultiGameInfo MGI = new MultiGameInfo();
-                mDatabaseReference.child("MultiGames").setValue(MGI);
                 finish();
+                System.exit(0);
             }
         }).show();
 

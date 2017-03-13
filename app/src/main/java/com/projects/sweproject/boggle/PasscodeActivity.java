@@ -15,11 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 public class PasscodeActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabaseReference;
-
-
-
-
-
+    Boolean MGI=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +24,14 @@ public class PasscodeActivity extends AppCompatActivity {
         TextView t1;
         String passcode;
 
-         ValueEventListener VE = new ValueEventListener(){
+          final ValueEventListener VE = new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-               Boolean MGI = (boolean) dataSnapshot.getValue();
+               MGI = (boolean) dataSnapshot.getValue();
 
                 if(MGI){
                     Toast.makeText(getApplicationContext(),"Player 2 joined",Toast.LENGTH_SHORT).show();
-                    mDatabaseReference.removeEventListener(this);
                     Intent in = new Intent(getApplicationContext(), MultiPlayerModes.class);
                     in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(in);
@@ -64,6 +59,5 @@ public class PasscodeActivity extends AppCompatActivity {
 
 
     }
-
 
 }
