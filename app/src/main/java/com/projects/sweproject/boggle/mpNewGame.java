@@ -741,12 +741,13 @@ public class mpNewGame extends AppCompatActivity {
     };
 
     public void showScore(String PlayerType){
+        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (scoreMultiDBHelper.isHighScore(score, Level)) {
             alertDialog.setTitle("Congratulations! Your score: " + score + " is in top 5");
             final EditText highScoreName = new EditText(mpNewGame.this);
             highScoreName.setHint("Please enter your name:");
             alertDialog.setView(highScoreName);
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
             alertDialog.setNegativeButton("Submit", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -762,6 +763,8 @@ public class mpNewGame extends AppCompatActivity {
                     Intent intent = new Intent(mpNewGame.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    mpNewGame.this.finish();
+                    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
                 }
             });
@@ -776,11 +779,16 @@ public class mpNewGame extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
                 //quit go back to Mainacitivyt
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 Intent intent = new Intent(mpNewGame.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                mpNewGame.this.finish();
+
+
             }
         }).show();
+
 
     }
 
