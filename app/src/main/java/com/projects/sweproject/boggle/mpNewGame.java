@@ -419,6 +419,7 @@ public class mpNewGame extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
+        System.exit(0);
     }
 
     public int calculateScore(String word){
@@ -616,7 +617,7 @@ public class mpNewGame extends AppCompatActivity {
         public void onClick(View v) {
 
 
-            Toast.makeText(mpNewGame.this, "Type: " +PlayerType, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(mpNewGame.this, "Type: " +PlayerType, Toast.LENGTH_SHORT).show();
             final String input = wordIn.getText().toString();
 
             if(input.length()<3){
@@ -763,8 +764,10 @@ public class mpNewGame extends AppCompatActivity {
                     Intent intent = new Intent(mpNewGame.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                    mpNewGame.this.finish();
-                    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                    MultiGameInfo MGI = new MultiGameInfo();
+                    mDatabaseReference.child("MultiGames").setValue(MGI);
+                    finish();
+                    System.exit(0);
 
                 }
             });
@@ -783,9 +786,8 @@ public class mpNewGame extends AppCompatActivity {
                 Intent intent = new Intent(mpNewGame.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                mpNewGame.this.finish();
-
-
+                finish();
+                System.exit(0);
             }
         }).show();
 
@@ -816,8 +818,6 @@ public class mpNewGame extends AppCompatActivity {
             }
         }).show();
     }
-
-
 
 
 }
